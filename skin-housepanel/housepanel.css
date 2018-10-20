@@ -13,11 +13,13 @@ div.greeting {
     margin-top: 10px;
     margin-left: 10px;
     margin-bottom: 20px;
-    border: 2px solid black;
-    width: 860px;
+    border: 4px solid black;
+    width: 1010px;
     background-color: #eeeeee;
     color: black;
     font-size: 12pt;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 div.greeting p {
@@ -30,16 +32,29 @@ div.greetingopts {
 }
 div.greetingopts div {
     margin-top: 6px;
+    margin-bottom: 10px;
 }
 div.greetingopts div.hubopt {
-    margin-top: 15px;
-    width: 220px;
-    border-bottom: 2px solid blue;
+    margin-top: 20px; margin-bottom: 20px;
+    width: 1020px;
+    border-bottom: 2px solid black;
 }
 
-label.startupinp {
-    font-style: italic;
+label.startupinp, input.indent {
     font-weight: bold;
+    font-size: 12pt;
+    margin-left: 5px;
+}
+
+label.highlight {
+    background-color: rgba(0, 40, 20, 1);
+    color: #ffffee;
+}
+
+div.authhub {
+    border: 2px solid black;
+    background-color: rgba(240, 240, 220, 1);
+    width: 1020px;
 }
 
 div.maintable {
@@ -61,13 +76,33 @@ h1, h2, h3 {
     margin-bottom: 2px;    margin-top: 2px;    margin-left: 10px;
 }
 
-input.startupinp {
-    width: 700px;
+
+input.startupinp, select.startupinp, input.editinp {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 12pt;
+    border-top: #cccccc solid 3px;
+    border-left: #cccccc solid 3px;
+    border-right: black solid 3px;
+    border-bottom: black solid 3px;
+    width: 800px;
     position: absolute;
-    left: 170px;
+    left: 220px;
     display: inline-block;
 }
 
+select.startupinp {
+    width: 200px;
+}
+input.editinp {
+    left: 150px;
+    width: 400px;
+}
+
+div.tileDialog {
+    width: 400px;
+    
+}
 div#tabs, div#controlpanel {
     /*width: 1180px;*/
 /*    transform: scale(0.6);
@@ -130,8 +165,13 @@ ul.ui-tabs-nav {
   color: black;
   font-size: 12pt;
 }
-.debug, .error {
+.error {
   background-color: #cc3300;  color: #ffffff;  font-size: 10pt;
+}
+.debug {
+  background-color: #006666;  
+  color: #ffffcc;  
+  font-size: 11pt;
 }
 .hidden, ul.ul-tabs-nav.hidden {
     display: none;
@@ -707,21 +747,25 @@ div.contact.mat.closed {
 }
 
 /* specific contact types one might find */
+div.door.garage {
+    cursor: pointer;
+}
+div.contact.door {
+    cursor: default;
+}
 div.door.open, div.contact.door.open {
     background-image: url('icons/opendoor.png');
     color: rgba(255, 255, 255, 0.01);
     background-size: 40px;
-    cursor: pointer;
 }
 div.door.closed, div.contact.door.closed {
     background-image: url('icons/closedoor.png');
     color: rgba(255, 255, 255, 0.01);
     background-size: 40px;
-    cursor: pointer;
 }
 /* hide the contact part of garage doors that include an embedded contact sensor */
 /*div.door-thing div.overlay.contact, div.garage.door.contact {*/
-div.garage.door.contact {
+div.door-thing.garage div.contact {
     display: none;
 }
 div.contact.window.open {
@@ -744,6 +788,11 @@ div.door.garage.closed {
     color: rgba(255, 255, 255, 0.01);
     background-size: 80px;
     height: 112px;
+    cursor: pointer;
+}
+
+/* custom tiles*/
+div.custom-thing div.custom.post {
     cursor: pointer;
 }
 
@@ -1191,7 +1240,7 @@ div.music.musicstatus, div.music.musicmute {
 }*/
 
 /* pistons */
-div.piston-thing {
+div.piston-thing, div.music.musicmute  {
     cursor: pointer;
 }
 div.piston.webcore {
@@ -1304,11 +1353,21 @@ div.blank.size.b1x1, div.blank.size.b1x2, div.blank.size.b2x1, div.blank.size.b2
     width: 120px;    height: 160px;
     font-size: 0px;    padding-left: 0px;
 }
+div.blank.size.h1x1, div.blank.size.h1x2, div.blank.size.h2x1, div.blank.size.h2x2 {
+    width: 120px;    height: 160px;
+    font-size: 0px;    padding-left: 0px;
+}
 /* add special sizes for the b1x2, b2x1, and b2x2 tiles  */
 div.blank.size.b2x1, div.blank.size.b2x2 {
     width: 244px;
 }
+div.blank.size.h2x1, div.blank.size.h2x2 {
+    width: 244px;
+}
 div.blank.size.b1x2, div.blank.size.b2x2 {
+    height: 320px;
+}
+div.blank.size.h1x2, div.blank.size.h2x2 {
     height: 320px;
 }
 div.thing.blank-thing:hover {
@@ -1324,6 +1383,9 @@ div.thing.blank-thing:hover {
 div.thing.clock-thing {
     height: 150px;
     width: 246px;
+}
+div.thing.clock-thing.analog {
+    background-color: white;
 }
 div.clock.weekday {
     margin-top: 0px;
@@ -1451,6 +1513,9 @@ div.bulb.color, div.light.color {
     display: none;
     cursor: pointer;
     z-index: 9999;
+}
+div.bulb.colorMode {
+    display: none;
 }
 
 div.custom-thing {

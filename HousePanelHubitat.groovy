@@ -17,9 +17,11 @@
  * it displays and enables interaction with switches, dimmers, locks, etc
  * 
  * Revision history:
+ * 09/03/2018 - updated to work with multihub
+ * 08/20/2018 - fix another bug in lock that caused render to fail upon toggle
  * 08/11/2018 - added pistons and other cleanup
  * 07/24/2018 - fix bug in lock opening and closing with motion detection
- * 06/21/2018 - Automatic push of Hubitat settings to HP server
+ * 06/21/2018 - Auto`matic push of Hubitat settings to HP server
  * 06/16/2018 - Sync important bug fixes from SmartThings version
  * 06/16/2018 - Add cloud and local options and auto configuration
  * 06/15/2018 - Port over updates from ST side; icon change other cleanup
@@ -34,7 +36,7 @@
  *            - Remove old code block of getHistory code
  * 
  */
-public static String version() { return "v1.77" }
+public static String version() { return "v1.793" }
 public static String handle() { return "HousePanel" }
 definition(
     name: "${handle()}",
@@ -50,20 +52,19 @@ definition(
 
 preferences {
     section("Hubitat Configuration") {
-        paragraph "The HousePanel url is the full url address where your HousePanel application is installed. " +
-                  "This is typically a rPi device on the same network subnet as the Hubitat HUB. \n" +
-                  "HousePanel uses this to push the access token and hub id to your server instead of requiring " +
-                  "user manual configuration; however, you can always still configure HousePanel manually. " +
-                  "(By the way, I know this isn't the usual auth process. That will come soon)"
-        input (name: "hpurl", type: "text", title: "HousePanel url", defaultValue: "http://192.168.11.20/smartthings/housepanel.php", required: true, multiple: false )
+//        paragraph "The HousePanel url is the full url address where your HousePanel application is installed. " +
+//                  "This is typically a rPi device on the same network subnet as the Hubitat HUB. \n" +
+//                  "HousePanel uses this to push the access token and hub id to your server instead of requiring " +
+//                  "user manual configuration; however, you can always still configure HousePanel manually. " +
+//                  "(By the way, I know this isn't the usual auth process. That will come soon)"
+//         input (name: "hpurl", type: "text", title: "HousePanel url", defaultValue: "http://192.168.11.20/smartthings/housepanel.php", required: true, multiple: false )
         paragraph "Set the Cloud Calls option to True if your HousePanel app is NOT on your local LAN. " +
-                  "When this is true all calls to HousePanel will be through the Cloud endpoint. " +
-                  "Actions and updates will be slower than local installations."
+                  "When this is true the cloud URL will be shown for use in HousePanel. When calls are through the Cloud endpoint " +
+                  "actions will be slower than local installations."
         input (name: "cloudcalls", type: "bool", title: "Cloud Calls", defaultValue: false, required: true)
-        paragraph "Set this to True if you do not have a SmartThings hub. This will make the Hubitat " +
-                  "installation return blanks and images that are usual done on the Smartthings side. \n" +
-                  "This will also make the app bypass any SmartThings authentication step attempts."
-        input (name: "hubitatonly", type: "bool", title: "use Hubitat only?", defaultValue: false, required: true)
+        paragraph "Enable this to use Pistons. You must have WebCore installed locally for this to work (Beta)."
+        input (name: "usepistons", type: "bool", multiple: false, title: "Use Pistons?", required: false, defaultValue: false)
+        input (name: "dologging", type: "bool", multiple: false, title: "Do logging?", required: false, defaultValue: true)
     }
     section("Lights and Switches...") {
         input "myswitches", "capability.switch", multiple: true, required: false, title: "Switches"
@@ -94,8 +95,7 @@ preferences {
     section ("Other Sensors and Options") {
     	input "mymusics", "capability.musicPlayer", hideWhenEmpty: true, multiple: true, required: false, title: "Music Players"
     	input "mysmokes", "capability.smokeDetector", hideWhenEmpty: true, multiple: true, required: false, title: "Smoke Detectors"
-//    	input "myothers", "capability.sensor", multiple: true, required: false, title: "Other and Virtual Sensors"
-        input (name: "usepistons", type: "bool", multiple: false, title: "Use Pistons (must have a local WebCore installed)?", required: false, defaultValue: false)
+    	input "myothers", "capability.sensor", multiple: true, required: false, title: "Other and Virtual Sensors"
     }
 }
 
@@ -126,77 +126,40 @@ def updated() {
 
 def initialize() {
     configureHub();
-    log.debug "Installed with settings: ${settings} "
     state.usepistons = usepistons
+    state.dologging = dologging
     if ( state.usepistons ) {
         webCoRE_init()
+    }
+    if ( state.dologging ) {
+        log.debug "Installed with settings: ${settings} "
     }
 }
 
 def configureHub() {
-    state.hubitatOnly = hubitatonly
     if ( ! state.accessToken ) {
     	createAccessToken(); 
-	    log.debug "Creating new accessToken ..."
-        log.debug "You can optionally specify app.id and accessToken in the clientinfo.php file,"
-        log.debug "but this is no longer required when using the default authentication process"
+	log.debug "Creating new accessToken ..."
     }
     
     // get the cloud and local access points
-    def hubip = location.hubs[0].getDataValue("localIP")
+    def hubip;
     def endpt
     if ( cloudcalls ) {
-        endpt = "${getApiServerUrl()}/${hubUID}/apps/${app.id}/"
-        log.debug "Cloud installation was requested and is reflected in the endpt below"
+        hubip = "https://oauth.cloud.hubitat.com";
+        endpt = "${hubip}/${hubUID}/apps/${app.id}/"
+        log.debug "Cloud installation was requested and is reflected in the hubip and endpt above"
     } else {
+        hubip = location.hubs[0].getDataValue("localIP")
         endpt = "${hubip}/apps/api/${app.id}/"
     }
 
-    // send debug info to log for manual setup option
-    log.debug "This information is being sent to your HousePanel web app at ${hpurl}"
-    log.debug "HousePanel url = ${hpurl}"
+    log.debug "Use this information on the Auth page of House Panel."
     log.debug "Hubitat IP = ${hubip}"
-    log.debug "app.id = ${app.id}"
+    log.debug "Hub ID = ${app.id}"
     log.debug "accessToken = ${state.accessToken}"
     log.debug "Hubitat endpt = ${endpt}"
-    log.debug "Hubitat only? = ${state.hubitatOnly}"
 
-    // push these variables to our HousePanel server
-    // this can be local or somewhere out on the Internet
-    // we don't need the hubip and id but we send it anyway
-    // what we really need is the accesstoken and endpt
-    def cmds = [
-        useajax: "confighubitat",
-        id: "hubitat",
-        type: "none",
-        value: [
-            hubip: hubip, 
-            hubitatid: app.id,
-            accesstoken: state.accessToken,
-            endpt: endpt,
-            hubitatonly: state.hubitatOnly
-        ]
-    ]
-
-    def params = [
-        uri: "${hpurl}",
-        requestContentType: "application/x-www-form-urlencoded",
-        query: cmds
-    ]
-
-    try {
-        httpGet(params) { resp ->
-            def msg = ""
-            if (resp?.status == 200) {
-                msg = "Success"
-            } else {
-                msg = "Failure: ${resp?.status}"
-            }
-            log.debug "response: ${msg} (${resp.data})"
-        }
-    } catch (e) {
-        log.debug "Something went wrong: $e"
-    }
 }
 
 def getSwitch(swid, item=null) {
@@ -273,7 +236,9 @@ def getThermostat(swid, item=null) {
     if ( item.hasCapability("Battery") ) {
         resp.put("battery", item.currentValue("battery"))
     }
-    // log.debug "Thermostat response = ${resp}"
+    if ( state.dologging ) {
+        log.debug "Thermostat response = ${resp}"
+    }
     return resp
 }
 
@@ -379,7 +344,9 @@ def setOther(swid, cmd, attr, subid ) {
     
     if (item && subid.startsWith("_")) {
         subid = subid.substring(1)
-        // log.debug "Activating other device " + item + " command: " + subid
+        if ( state.dologging ) {
+            log.debug "Activating other device " + item + " command: " + subid
+        }
         resp = [:]
         if ( item.hasCommand(subid) ) {
             item."$subid"()
@@ -409,7 +376,9 @@ def getThing(things, swid, item=null) {
                         def othervalue = item.currentValue(othername)
                         resp.put(othername,othervalue)
                     } catch (ex) {
-                        log.warn "Attempt to read attribute for ${swid} failed"
+                        if ( state.dologging ) {
+                            log.warn "Attempt to read attribute for ${swid} failed"
+                        }
                     } 
                 }
             }
@@ -438,8 +407,10 @@ def getThing(things, swid, item=null) {
 // make a generic thing list getter to streamline the code
 def getThings(resp, things, thingtype) {
 //    def resp = []
-//    def n  = things ? things.size() : 0
-//    if ( n > 0 ) { log.debug "Number of things of type ${thingtype} = ${n}" }
+    def n  = things ? things.size() : 0
+    if ( state.dologging ) {
+        log.debug "Number of things of type ${thingtype} = ${n}"
+    }
     things?.each {
         def val = getThing(things, it.id, it)
         resp << [name: it.displayName, id: it.id, value: val, type: thingtype]
@@ -467,13 +438,11 @@ def getAllThings() {
     resp = getIlluminances(resp)
     resp = getValves(resp)
     resp = getWaters(resp)
+    resp = getMusics(resp)
     resp = getSmokes(resp)
     resp = getOthers(resp)
-
-    if ( state.hubitatOnly ) {
-        resp = getBlanks(resp)
-        resp = getImages(resp)
-    }
+    resp = getBlanks(resp)
+    resp = getImages(resp)
 
     // optionally include pistons based on user option
     if (state.usepistons) {
@@ -485,7 +454,9 @@ def getAllThings() {
 // this returns just a single active mode, not the list of available modes
 // this is done so we can treat this like any other set of tiles
 def getModes(resp) {
-    log.debug "Getting 4 mode tiles"
+    if ( state.dologging ) {
+        log.debug "Getting 4 mode tiles"
+    }
     def val = getmyMode(0)
     resp << [name: "Mode", id: "m1x1", value: val, type: "mode"]
     resp << [name: "Mode", id: "m1x2", value: val, type: "mode"]
@@ -495,7 +466,7 @@ def getModes(resp) {
 }
 
 def getBlanks(resp) {
-    def vals = ["b1x1","b1x2","b2x1","b2x2"]
+    def vals = ["h1x1","h1x2","h2x1","h2x2"]
     def val
     vals.each {
         val = getBlank(it)
@@ -505,7 +476,7 @@ def getBlanks(resp) {
 }
 
 def getImages(resp) {
-    def vals = ["img1","img2","img3","img4"]
+    def vals = ["himg1","himg2","himg3","himg4"]
     def val
     vals.each {
         val = getImage(it)
@@ -516,7 +487,9 @@ def getImages(resp) {
 
 def getPistons(resp) {
     def plist = webCoRE_list()
-    log.debug "Number of pistons = " + plist?.size() ?: 0
+    if ( state.dologging ) {
+        log.debug "Number of pistons = " + plist?.size() ?: 0
+    }
     plist?.each {
         def val = getPiston(it.id, it)
         resp << [name: it.name, id: it.id, value: val, type: "piston"]
@@ -636,7 +609,7 @@ def getRoutines(resp) {
 
 def getOthers(resp) {
     def n  = myothers ? myothers.size() : 0
-    if ( n > 0 ) { log.debug "Number of selected other sensors = ${n}" }
+    if ( n > 0 && state.dologging ) { log.debug "Number of selected other sensors = ${n}" }
     myothers?.each {
         def thatid = it.id;
         def multivalue = getThing(myothers, thatid, it)
@@ -646,7 +619,7 @@ def getOthers(resp) {
 }
 
 def autoType(swid) {
-	def swtype
+    def swtype
     if ( mydimmers?.find {it.id == swid } ) { swtype= "switchlevel" }
     else if ( mymomentaries?.find {it.id == swid } ) { swtype= "momentary" }
     else if ( mylights?.find {it.id == swid } ) { swtype= "light" }
@@ -684,7 +657,9 @@ def doAction() {
     def swattr = params.swattr
     def subid = params.subid
     def cmdresult = false
-    log.debug "doaction params: cmd = $cmd type = $swtype id = $swid subid = $subid"
+    if ( state.dologging ) {
+        log.debug "doaction params: cmd = $cmd type = $swtype id = $swid subid = $subid"
+    }
 
     // get the type if auto is set
     if ( (swtype=="auto" || swtype=="none" || swtype=="") && swid ) {
@@ -757,7 +732,9 @@ def doAction() {
           cmdresult = setOther(swid, cmd, swattr, subid)
           break
     }
-    log.debug "HousePanel doaction: cmd = $cmd type = $swtype id = $swid subid = $subid cmdresult = $cmdresult"
+    if ( state.dologging ) {
+        log.debug "HousePanel doaction: cmd = $cmd type = $swtype id = $swid subid = $subid cmdresult = $cmdresult"
+    }
     return cmdresult
 }
 
@@ -938,7 +915,9 @@ def setMode(swid, cmd, swattr) {
         newsw = allmodes[0].getName()
     }
     
-    log.debug "Mode changed from $themode to $newsw index = $idx "
+    if ( state.dologging ) {
+        log.debug "Mode changed from $themode to $newsw index = $idx "
+    }
     location.setMode(newsw);
     resp =  [   name: swid, 
                 sitename: location.getName(),
@@ -967,7 +946,9 @@ def setGenericLight(mythings, swid, cmd, swattr) {
     if (item ) {
     
         def newonoff = item.currentValue("switch")
-        log.debug "generic light cmd = $cmd swattr = $swattr"
+        if ( state.dologging ) {
+            log.debug "generic light cmd = $cmd swattr = $swattr"
+        }
         // bug fix for grabbing right swattr when long classes involved
         // note: sometime swattr has the command and other times it has the value
         //       just depends. This is a legacy issue when classes were the command
@@ -1128,12 +1109,10 @@ def setGenericLight(mythings, swid, cmd, swattr) {
                 hue = cmd.substring(4,7).toInteger()
                 saturation = cmd.substring(8,11).toInteger()
                 newsw = cmd.substring(12,15).toInteger()
-//                log.debug "cmd= ${cmd} hue= ${hue} sat= ${saturation} level= ${newsw}"
                 item.setHue(hue)
                 item.setSaturation(saturation)
                 item.setLevel(newsw)
                 newcolor = hsv2rgb(hue, saturation, newsw)
-//                log.debug "New color = $newcolor"
                 newonoff = "on"
                 skiponoff = true
             }
@@ -1218,21 +1197,21 @@ def setLock(swid, cmd, swattr) {
     def newsw
     def item  = mylocks.find {it.id == swid }
     
-    log.debug "Performing setLock command with cmd = ${cmd} and swattr = ${swattr}"
+    if ( state.dologging ) {
+        log.debug "Performing setLock command with cmd = ${cmd} and swattr = ${swattr}"
+    }
     if (item) {
         if (cmd=="toggle") {
-            newsw = item.currentLock=="locked" ? "unlock" : "lock"
-            if ( newsw=="lock" ) {
+            newsw = item.currentLock=="locked" ? "unlocked" : "locked"
+            if ( newsw=="locked" ) {
                item.lock()
             } else {
                item.unlock()
             }
         } else if ( cmd=="unknown" ) {
             newsw = item.currentLock
-    	    log.debug "Ignoring unknown status..."
         } else if ( cmd=="move" ) {
             newsw = item.currentLock
-    	    log.debug "Ignoring move command for lock..."
         } else if (cmd=="unlock") {
             item.unlock()
             newsw = "unlocked"
@@ -1523,11 +1502,10 @@ private webCoRE_poll(){sendLocationEvent([name: webCoRE_handle(),value:'poll',is
 public  webCoRE_execute(pistonIdOrName,Map data=[:]){def i=(state.webCoRE?.pistons?:[]).find{(it.name==pistonIdOrName)||(it.id==pistonIdOrName)}?.id;if(i){sendLocationEvent([name:i,value:app.label,isStateChange:true,displayed:false,data:data])}}
 public  webCoRE_list(mode)
 {
-	def p=state.webCoRE?.pistons;
+    def p=state.webCoRE?.pistons;
     if(p)p.collect{
-		mode=='id'?it.id:(mode=='name'?it.name:[id:it.id,name:it.name])
-        // log.debug "Reading piston: ${it}"
-	}
+        mode=='id'?it.id:(mode=='name'?it.name:[id:it.id,name:it.name])
+    }
     return p
 }
 public  webCoRE_handler(evt){switch(evt.value){case 'pistonList':List p=state.webCoRE?.pistons?:[];Map d=evt.jsonData?:[:];if(d.id&&d.pistons&&(d.pistons instanceof List)){p.removeAll{it.iid==d.id};p+=d.pistons.collect{[iid:d.id]+it}.sort{it.name};state.webCoRE = [updated:now(),pistons:p];};break;case 'pistonExecuted':def cbk=state.webCoRE?.cbk;if(cbk&&evt.jsonData)"$cbk"(evt.jsonData);break;}}
