@@ -17,6 +17,11 @@
  * it displays and enables interaction with switches, dimmers, locks, etc
  * 
  * Revision history:
+ * 11/24/2018 - implement workaround hack to dimmer light inconsistency
+ * 11/21/2018 - add routine to return location name
+ * 11/19/2018 - thermostat tweaks to support new custom tile feature 
+ * 11/18/2018 - fixed hsm name and mode names to include size cues
+ * 11/17/2018 - added Hubitat modes and hsm; removed routines dead code; bugfixes
  * 09/03/2018 - updated to work with multihub
  * 08/20/2018 - fix another bug in lock that caused render to fail upon toggle
  * 08/11/2018 - added pistons and other cleanup
@@ -36,7 +41,7 @@
  *            - Remove old code block of getHistory code
  * 
  */
-public static String version() { return "v1.793" }
+public static String version() { return "v1.923" }
 public static String handle() { return "HousePanel" }
 definition(
     name: "${handle()}",
@@ -111,6 +116,10 @@ mappings {
   
   path("/doquery") {
      action: [       POST: "doQuery"     ]
+  }
+  
+  path("/gethubinfo") {
+     action: [       POST: "getHubInfo"     ]
   }
 
 }
@@ -295,6 +304,17 @@ def getmyMode(swid, item=null) {
     return resp
 }
 
+def getHsmState(swid) {
+    // uses Hubitat specific call for HSM per 
+    // https://community.hubitat.com/t/hubitat-safety-monitor-api/934/11
+    def status = location.hsmStatus
+    if ( !status ) {
+        status = "uninstalled"
+    }
+    def resp = [name : "Hubitat Safety Monitor", state: status]
+    return resp
+}
+
 def getBlank(swid, item=null) {
     def resp = [name: "Blank ${swid}", size: "${swid}"]
     return resp
@@ -302,13 +322,6 @@ def getBlank(swid, item=null) {
 
 def getImage(swid, item=null) {
     def resp = [name: "Image ${swid}", url: "${swid}"]
-    return resp
-}
-
-def getRoutine(swid, item=null) {
-    def routines = location.helloHome?.getPhrases()
-    def routine = item ? item : routines.find{it.id == swid}
-    def resp = routine ? [name: routine.label, label: routine.label] : false
     return resp
 }
 
@@ -440,6 +453,8 @@ def getAllThings() {
     resp = getWaters(resp)
     resp = getMusics(resp)
     resp = getSmokes(resp)
+    resp = getModes(resp)
+    resp = getHsmStates(resp)
     resp = getOthers(resp)
     resp = getBlanks(resp)
     resp = getImages(resp)
@@ -455,18 +470,26 @@ def getAllThings() {
 // this is done so we can treat this like any other set of tiles
 def getModes(resp) {
     if ( state.dologging ) {
-        log.debug "Getting 4 mode tiles"
+        log.debug "Getting 4 Hubitat mode tiles"
     }
     def val = getmyMode(0)
-    resp << [name: "Mode", id: "m1x1", value: val, type: "mode"]
-    resp << [name: "Mode", id: "m1x2", value: val, type: "mode"]
-    resp << [name: "Mode", id: "m2x1", value: val, type: "mode"]
-    resp << [name: "Mode", id: "m2x2", value: val, type: "mode"]
+    resp << [name: "Mode hm1x1", id: "hm1x1", value: val, type: "mode"]
+    resp << [name: "Mode hm1x2", id: "hm1x2", value: val, type: "mode"]
+    resp << [name: "Mode hm2x1", id: "hm2x1", value: val, type: "mode"]
+    resp << [name: "Mode hm2x2", id: "hm2x2", value: val, type: "mode"]
+    return resp
+}
+
+def getHsmStates(resp) {
+    def val = getHsmState(0)
+    if ( val ) {
+        resp << [name: "Hubitat Safety Monitor", id: "hsm", value: val, type: "hsm"]
+    }
     return resp
 }
 
 def getBlanks(resp) {
-    def vals = ["h1x1","h1x2","h2x1","h2x2"]
+    def vals = ["hb1x1","hb1x2","hb2x1","hb2x2"]
     def val
     vals.each {
         val = getBlank(it)
@@ -597,16 +620,6 @@ def getWeathers(resp) {
     return resp
 }
 
-// get hellohome routines - thanks to ady264 for the tip
-def getRoutines(resp) {
-    def routines = location.helloHome?.getPhrases()
-    routines?.each {
-        def multivalue = getRoutine(it.id, it)
-        resp << [name: it.label, id: it.id, value: multivalue, type: "routine"]
-    }
-    return resp
-}
-
 def getOthers(resp) {
     def n  = myothers ? myothers.size() : 0
     if ( n > 0 && state.dologging ) { log.debug "Number of selected other sensors = ${n}" }
@@ -615,6 +628,12 @@ def getOthers(resp) {
         def multivalue = getThing(myothers, thatid, it)
         resp << [name: it.displayName, id: thatid, value: multivalue, type: "other"]
     }
+    return resp
+}
+
+def getHubInfo() {
+    def resp =  [ sitename: location.getName(),
+                  hubtype: "Hubitat" ]
     return resp
 }
 
@@ -639,15 +658,16 @@ def autoType(swid) {
     else if ( mysmokes?.find {it.id == swid } ) { swtype= "smoke" }
     else if ( mytemperatures?.find {it.id == swid } ) { swtype= "temperature" }
     else if ( myothers?.find {it.id == swid } ) { swtype= "other" }
-    else if ( swid=="m1x1" || swid=="m1x2" || swid=="m2x1" || swid=="m2x2" ) { swtype= "mode" }
-    else if ( swid=="b1x1" || swid=="b1x2" || swid=="b2x1" || swid=="b2x2" ) { swtype= "blank" }
-    else if ( swid=="img1" || swid=="img2" || swid=="img3" || swid=="img4" ) { swtype= "image" }
+    else if ( swid=="hsm" ) { swtype= "hsm" }
+    else if ( swid=="hm1x1" || swid=="hm1x2" || swid=="hm2x1" || swid=="hm2x2" ) { swtype= "mode" }
+    else if ( swid=="hb1x1" || swid=="hb1x2" || swid=="hb2x1" || swid=="hb2x2" ) { swtype= "blank" }
+    else if ( swid=="himg1" || swid=="himg2" || swid=="himg3" || swid=="himg4" ) { swtype= "image" }
     else if ( state.usepistons && webCoRE_list().find {it.id == swid} ) { swtype= "piston" }
     else { swtype = "" }
     return swtype
 }
 
-// routine that performs ajax action for clickable tiles
+// this performs ajax action for clickable tiles
 def doAction() {
     // returns false if the item is not found
     // otherwise returns a JSON object with the name, value, id, type
@@ -709,6 +729,10 @@ def doAction() {
          cmdresult = setMode(swid, cmd, swattr)
          break
          
+      case "hsm":
+          cmdresult = setHsmState(swid, cmd, swattr, subid)
+          break;
+         
       case "valve" :
       	 cmdresult = setValve(swid, cmd, swattr)
          break
@@ -723,10 +747,6 @@ def doAction() {
              cmdresult = getPiston(swid)
          }
          break;
-      
-      case "routine" :
-        cmdresult = setRoutine(swid, cmd, swattr)
-        break;
         
       case "other" :
           cmdresult = setOther(swid, cmd, swattr, subid)
@@ -815,8 +835,8 @@ def doQuery() {
     case "mode" :
         cmdresult = getmyMode(swid)
         break
-    case "routine" :
-        cmdresult = swid ? getRoutine(swid) : getRoutines( [] )
+    case "hsm" :
+        cmdresult = getHsmState(swid)
         break
 
     }
@@ -830,8 +850,12 @@ def setOnOff(items, itemtype, swid, cmd, swattr) {
     if (item) {
         if (cmd=="on" || cmd=="off") {
             newonoff = cmd
-        } else if ( swattr=="on" || swattr=="off") {
-            newonoff = swattr
+        } else if ( cmd=="toggle" ) {
+            newonoff = item.currentValue(itemtype)=="off" ? "on" : "off"
+        } else if ( swattr.endsWith("on") ) {
+            newonoff = "off"
+        } else if ( swattr.endsWith("off") ) {
+            newonoff = "on"
         } else {
             newonoff = item.currentValue(itemtype)=="off" ? "on" : "off"
         }
@@ -915,15 +939,33 @@ def setMode(swid, cmd, swattr) {
         newsw = allmodes[0].getName()
     }
     
-    if ( state.dologging ) {
-        log.debug "Mode changed from $themode to $newsw index = $idx "
-    }
+    log.debug "Mode changed from $themode to $newsw index = $idx "
     location.setMode(newsw);
     resp =  [   name: swid, 
                 sitename: location.getName(),
                 themode: newsw
             ];
     
+    return resp
+}
+
+def setHsmState(swid, cmd, swattr, subid){
+    
+    def key = location.hsmStatus
+    
+    if ( subid=="state" ) {
+        def cmds = ["armAway", "armHome", "armNight", "disarm"]
+        def keys = ["armedAway", "armedHome", "armedNight", "disarmed"]
+        if ( keys.contains(cmd) ) {
+            def i = keys.indexOf(cmd) + 1
+            if ( i >= keys.size() ) { i = 0 }
+            cmd = cmds[i]
+            key = keys[i]
+            sendLocationEvent(name: "hsmSetArm", value: cmd)
+            // log.debug "HSM arm set to ${key}"
+        }
+    }
+    def resp = [name : "Hubitat Smart Monitor", state: key]
     return resp
 }
 
@@ -1124,10 +1166,18 @@ def setGenericLight(mythings, swid, cmd, swattr) {
             } else {
                 newonoff = newonoff=="off" ? "on" : "off"
             }
-            newonoff=="on" ? item.on() : item.off()
-            if ( swattr.isNumber() ) {
+            if ( swattr.isNumber() && item.hasCommand("setLevel") ) {
                 newsw = swattr.toInteger()
                 item.setLevel(newsw)
+            }
+            if ( newonoff == "on" ) {
+                item.on()
+            } else {
+                item.off()
+                // address Hubitat bug to set level zero
+                if ( item.hasCommand("setLevel") ) {
+                    item.setLevel(0)
+                }
             }
             skiponoff = true
             break               
@@ -1135,8 +1185,19 @@ def setGenericLight(mythings, swid, cmd, swattr) {
         }
         
         if ( ! skiponoff ) {
-        	newonoff=="on" ? item.on() : item.off()
+            if ( newonoff == "on" ) {
+                item.on()
+            } else {
+                item.off()
+                
+                // address Hubitat bug to set level zero
+                if ( item.hasCommand("setLevel") ) {
+                    item.setLevel(0)
+                }
+            }
+            item.poll()
         }
+        
         resp = [switch: newonoff]
         if ( newsw ) { resp.put("level", newsw) }
         if ( newcolor ) { resp.put("color", newcolor) }
@@ -1254,12 +1315,15 @@ def setThermostat(swid, curtemp, swattr, subid) {
     def newsw = 72
     def tempint
 
+    def cmd = curtemp
     def item  = mythermostats.find {it.id == swid }
     if (item) {
+//          log.debug "setThermostat attr = $swattr for id = $swid curtemp = $curtemp"
+        
           resp = getThermostat(swid, item)
           // switch (swattr) {
           // case "heat-up":
-          if ( swattr.endsWith("heat-up") ) {
+          if ( subid=="heat-up" || swattr.contains("heat-up") ) {
               newsw = curtemp.toInteger() + 1
               if (newsw > 85) newsw = 85
               // item.heat()
@@ -1269,7 +1333,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "cool-up":
-          else if ( swattr.endsWith("cool-up") ) {
+          else if ( subid=="cool-up" || swattr.contains("cool-up") ) {
               newsw = curtemp.toInteger() + 1
               if (newsw > 85) newsw = 85
               // item.cool()
@@ -1279,7 +1343,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
 
           // case "heat-dn":
-          else if ( swattr.endsWith("heat-dn")) {
+          else if ( subid=="heat-dn" || swattr.contains("heat-dn")) {
               newsw = curtemp.toInteger() - 1
               if (newsw < 50) newsw = 50
               // item.heat()
@@ -1289,7 +1353,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "cool-dn":
-          else if ( swattr.endsWith("cool-dn")) {
+          else if ( subid=="cool-dn" || swattr.contains("cool-dn")) {
               newsw = curtemp.toInteger() - 1
               if (newsw < 60) newsw = 60
               // item.cool()
@@ -1307,8 +1371,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "thermostat thermomode heat":
-          else if ( swattr.contains("thermomode") && swattr.endsWith("heat")) {
-              def modecmd = swattr
+          else if ( swattr.contains("thermomode") && (cmd=="heat" || swattr.contains("heat")) ) {
               item.cool()
               newsw = "cool"
               resp['thermomode'] = newsw
@@ -1316,7 +1379,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "thermostat thermomode cool":
-          else if ( swattr.contains("thermomode") && swattr.endsWith("cool")) {
+          else if ( swattr.contains("thermomode") && (cmd=="cool" || swattr.contains("cool")) ) {
               item.auto()
               newsw = "auto"
               resp['thermomode'] = newsw
@@ -1324,7 +1387,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "thermostat thermomode auto":
-          else if ( swattr.contains("thermomode") && swattr.endsWith("auto")) {
+          else if ( swattr.contains("thermomode") && (cmd=="auto" || swattr.contains("auto")) ) {
               item.off()
               newsw = "off"
               resp['thermomode'] = newsw
@@ -1332,7 +1395,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "thermostat thermomode off":
-          else if ( swattr.contains("thermomode") && swattr.endsWith("off")) {
+          else if ( swattr.contains("thermomode") && (cmd=="off" || swattr.contains("off")) ) {
               item.heat()
               newsw = "heat"
               resp['thermomode'] = newsw
@@ -1340,7 +1403,7 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "thermostat thermofan fanOn":
-          else if ( swattr.contains("thermofan") && swattr.endsWith("on")) {
+          else if ( swattr.contains("thermofan") && (cmd=="on" || swattr.contains("on")) ) {
               item.fanAuto()
               newsw = "auto"
               resp['thermofan'] = newsw
@@ -1348,25 +1411,54 @@ def setThermostat(swid, curtemp, swattr, subid) {
           }
           
           // case "thermostat thermofan fanAuto":
-          else if ( swattr.contains("thermofan") && swattr.endsWith("auto")) {
-              item.fanCirculate()
-              newsw = "circulate"
+          else if ( swattr.contains("thermofan") && (cmd=="auto" || swattr.contains("auto")) ) {
+              if ( item.hasCommand("fanCirculate") ) {
+                item.fanCirculate()
+                newsw = "circulate"
+              } else {
+                  item.fanOn()
+                  newsw = "on"
+              }
               resp['thermofan'] = newsw
               // break
           }
           
-          // case "thermostat thermofan circulate":
-          else if ( swattr.contains("thermofan") && swattr.endsWith("circulate")) {
+          // case "thermostat thermofan fanAuto":
+          else if ( swattr.contains("thermofan") && (cmd=="circulate" || swattr.contains("circulate")) ) {
               item.fanOn()
               newsw = "on"
               resp['thermofan'] = newsw
               // break
           }
+
+        else if ( subid=="temperature" ) {
+            def subidval = resp[subid]
+            resp = [temperature: subidval]
+        }
+          
+        else if ( subid=="heat" ) {
+            def subidval = resp[subid]
+            resp = [heat: subidval]
+        }
+          
+        else if ( subid=="cool" ) {
+            def subidval = resp[subid]
+            resp = [cool: subidval]
+        }
+          
+        else if ( subid=="state" ) {
+            def subidval = resp[subid]
+            resp = [state: subidval]
+        }
+          
+        else if ( subid=="humidity" ) {
+            def subidval = resp[subid]
+            resp = [humidity: subidval]
+        }
            
           // define actions for python end points  
           else {
           // default:
-              def cmd = curtemp
               if ( (cmd=="heat" || cmd=="emergencyHeat") && swattr.isNumber()) {
                   item.setHeatingSetpoint(swattr)
                   resp['heat'] = swattr
@@ -1463,14 +1555,6 @@ def setMusic(swid, cmd, swattr, subid) {
         }
     }
     return resp
-}
-
-def setRoutine(swid, cmd, swattr) {
-    def routine = location.helloHome?.getPhrases().find{ it.id == swid }
-    if (routine) {
-        location.helloHome?.execute(routine.label)
-    }
-    return routine
 }
 
 /*************************************************************************/

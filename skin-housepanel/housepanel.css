@@ -1,273 +1,13 @@
-* {
-    font-family: "Droid Sans", sans-serif;
-    font-size: 11pt; padding: 0px; margin: 0px;
-    background-repeat: no-repeat;
-    background-position: center center;
-}
-body {
-    background-color: #ffffff;
-    color: #000000;
-    width: 1190px;
-}
-div.greeting {
-    margin-top: 10px;
-    margin-left: 10px;
-    margin-bottom: 20px;
-    border: 4px solid black;
-    width: 1010px;
-    background-color: #eeeeee;
-    color: black;
-    font-size: 12pt;
-    padding-left: 5px;
-    padding-right: 5px;
-}
+/* 
+ * This is the default HousePanel skin file 
+ * you can edit this file directly but I recommend
+ * that instead you copy this entire folder to a new folder
+ * renaming it to your new skin name and edit that copy
+ * then you can activate the skin in the HousePanel main GUI
+ * 
+ */
 
-div.greeting p {
-    margin-top: 8px;
-    margin-bottom: 4px;
-}
-div.greetingopts {
-    margin-left: 10px;
-    margin-bottom: 20px;
-}
-div.greetingopts div {
-    margin-top: 6px;
-    margin-bottom: 10px;
-}
-div.greetingopts div.hubopt {
-    margin-top: 20px; margin-bottom: 20px;
-    width: 1020px;
-    border-bottom: 2px solid black;
-}
-
-label.startupinp, input.indent {
-    font-weight: bold;
-    font-size: 12pt;
-    margin-left: 5px;
-}
-
-label.highlight {
-    background-color: rgba(0, 40, 20, 1);
-    color: #ffffee;
-}
-
-div.authhub {
-    border: 2px solid black;
-    background-color: rgba(240, 240, 220, 1);
-    width: 1020px;
-}
-
-div.maintable {
-/*    transform: scale(0.6);
-    -ms-transform: scale(0.6);
-    -moz-transform: scale(0.6);
-    -o-transform: scale(0.6);
-    -webkit-transform: scale(0.6);
-    transform-origin: 0 0;
-    -ms-transform-origin: 0 0;
-    -moz-transform-origin: 0 0;
-    -o-transform-origin: 0 0;
-    -webkit-transform-origin: 0 0;*/
-    width: auto;
-}
-h1, h2, h3 {
-    color: #000000;
-    font-size: 24pt;
-    margin-bottom: 2px;    margin-top: 2px;    margin-left: 10px;
-}
-
-
-input.startupinp, select.startupinp, input.editinp {
-    font-style: normal;
-    font-weight: normal;
-    font-size: 12pt;
-    border-top: #cccccc solid 3px;
-    border-left: #cccccc solid 3px;
-    border-right: black solid 3px;
-    border-bottom: black solid 3px;
-    width: 800px;
-    position: absolute;
-    left: 220px;
-    display: inline-block;
-}
-
-select.startupinp {
-    width: 200px;
-}
-input.editinp {
-    left: 150px;
-    width: 400px;
-}
-
-div.tileDialog {
-    width: 400px;
-    
-}
-div#tabs, div#controlpanel {
-    /*width: 1180px;*/
-/*    transform: scale(0.6);
-    -ms-transform: scale(0.6);
-    -moz-transform: scale(0.6);
-    -o-transform: scale(0.6);
-    -webkit-transform: scale(0.6);
-    transform-origin: 0 0;
-    -ms-transform-origin: 0 0;
-    -moz-transform-origin: 0 0;
-    -o-transform-origin: 0 0;
-    -webkit-transform-origin: 0 0;*/
-}
-
-div#catalog {
-    width: 395px;
-    display: block;
-    position: absolute;
-    top: 0px;
-    left: 1192px;
-    border: 2px solid rgb(128, 128, 128);
-    background-color: rgba(255, 255, 255, 1);
-    
-    /* set z-index above all tiles but below dragged tiles set to 999 */
-    z-index: 500;
-}
-div#dragregion {
-    width: auto;
-}
-
-.ui-widget.ui-widget-content{
-border-radius: 4px;
-margin: 0px 0 0 0;
-/*border-right: 5px solid #666666;
-border-bottom: 5px solid #666666;*/
-
-}
-.ui-tabs .ui-tabs-nav .ui-tabs-anchor{
-	text-decoration: none;
-	padding: .5em 1em;
-}
-div.ui-tabs-panel, ui-widget-content {
-    background: #333333;
-}
-ul.ui-tabs-nav {
-    background-color: #666666;
-    color: #000000;
-    font-size: 12pt;
-    border: none;
-}
-.ui-tabs .ui-tabs-nav li.ui-tabs-active .ui-tabs-anchor {
-    cursor: pointer;
-}
-.ui-tabs {
-    padding: 0;
-}
-
-.normal {
-  background-color: white;
-  color: black;
-  font-size: 12pt;
-}
-.error {
-  background-color: #cc3300;  color: #ffffff;  font-size: 10pt;
-}
-.debug {
-  background-color: #006666;  
-  color: #ffffcc;  
-  font-size: 11pt;
-}
-.hidden, ul.ul-tabs-nav.hidden {
-    display: none;
-}
-
-.shown, ul.ul-tabs-nav.shown {
-    display: inline-block;
-}
-
-div.skinoption, .kioskoption, div.filteroption, td.optname {
-    font-size: 12pt;
-    font-weight: bold;
-    margin-left: 8px;
-    margin-bottom: 2px;
-    color: #000000;
-}
-
-div.skinoption input {
-    width: 600px;
-}
-div.filteroption {
-    margin-top: 12px;
-}
-table.useroptions, table.catoptions {
-    margin-left: 8px;
-    background-color: #eeeeee;
-    border: solid 1px black;
-}
-table.catoptions {
-    margin-left: 5px;
-    width: 380px;
-}
-table.catoptions input {
-    margin-left: 15px;
-}
-td.optname {
-    padding-left: 5px;
-    padding-right: 30px;
-}
-
-form {
-    border: 0px;
-    padding: 0px;
-    margin: 0px;
-    background: #ffffff;
-    width: 100%;
-}
-
-form.houseauth {
-    display: inline;
-    width: auto;
-    margin-left: 10px;
-}
-
-/* how the tab page shows up - this affects everything shown */
-.ui-tabs .ui-tabs-panel {
-    padding-top: 0px;    padding-bottom: 0px;
-    padding-left: 0px;    padding-right: 4px;
-    text-align: left;
-}
-.ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
-    border-bottom-right-radius: 0px;
-}
-
-#options-tab {
-    padding-top: 10px;
-}
-
-#options-tab {
-    background-color: #ffffff;
-    color: #000000;
-}
-
-/* this dummy element adds space to show backgrounds */
-div.minheight {
-    display: inline-block;
-    width: 1px;
-    height: 400px;
-    color: rgba(0,0,0,0.01);
-}
-
-/* all panels look like this */
-#dragregion div.panel {
-    position:relative;    
-    min-height: 600px;
-}
-
-div.panel {
-    display: inline-block;
-    border: 0px solid #3333cc;
-    padding: 2px;    width: auto;    margin: auto;
-    background-position: 0 0;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
+/* panel backgrounds go here in the skin */
 div.panel-Family, div.panel-family, div.panel-Familyroom, div.panel-familyroom {
     background-image: url('media/family.jpg');
 }
@@ -277,9 +17,11 @@ div.panel-Kitchen, div.panel-kitchen, div.panel-Dinette, div.panel-dinette {
 div.panel-Living, div.panel-living, div.panel-Livingroom, div.panel-livingroom {
     background-image: url('media/formal.jpg');
 }
-div.panel-Outside, div.panel-outside, div.panel-Garage, div.panel-garage {
+div.panel-Outside, div.panel-outside {
     background-image: url('media/outside.jpg');
-
+}
+div.panel-Garage, div.panel-garage {
+    background-image: url('media/garage.jpg');
 }
 div.panel-Office, div.panel-office, div.panel-Library, div.panel-library {
     background-image: url('media/office.jpg');
@@ -288,325 +30,11 @@ div.panel-Bedroom, div.panel-bedroom, div.panel-Bedrooms, div.panel-bedrooms {
     background-image: url('media/bedroom.jpg');
 }
 div.panel-Music, div.panel-music, div.panel-Theater, div.panel-theater, 
-div.panel-Entertainment {
+div.panel-Entertainment, div.panel-entertainment {
     background-image: url('media/music.jpg');
-
 }
 div.panel-Thermostats, div.panel-thermostats {
     background-image: url('media/thermostat.jpg');
-}
-
-/* style the panel with all things listed */
-div.panel-All, div.panel-None, div.panel-Blank {
-    background-image: none;
-}
-
-/* formatting for endpoint mode query of access id information */
-table.showid {
-    background-color: white;
-    color: #000000;
-    width: 90%;
-    text-align: left;
-    
-}
-table.showid td, table.showid th {
-    width: 200px;
-    font-size: 12pt;
-    padding-left: 2px; padding-right: 2px;
-}
-
-/* format the options page */
-div.thead {
-    position: fixed;
-}
-div.scrollvtable {
-    overflow-y: auto;
-}
-@media only screen and (orientation: landscape) {
-    div.scrollvtable {
-        /*max-height: 400px;*/
-        overflow-y: hidden;
-    }
-}
-@media only screen and (orientation: portrait) {
-    div.scrollvtable {
-        /*max-height: 800px;*/
-        overflow-y: hidden;
-    }
-}
-@media only screen and (hover: hover) {
-    div.scrollvtable {
-        overflow-y: scroll;
-        max-height: 500px;
-    }
-}
-div.scrollhtable {
-    max-height: 100%;    overflow-x: auto;    overflow-y: hidden;
-    background-color: #ffffff;
-}
-div.optionstable {
-    background-color: #ffffff;
-    color: #000000;
-    width: 100%;
-}
-table.roomoptions, table.headoptions {
-    margin: 0px;    background-color: #ffffff;    color: #000000;
-    font-size: 11pt;    width: 100%;
-    border-collapse: collapse;    border: 2px solid black;
-    height: 24px;
-}
-table.headoptions {
-    height: 40px;
-}
-table.headoptions th.roomname, table.headoptions th.thingname, table.headoptions th.customedit, table.headoptions th.customname {
-    border-bottom: 5px solid rgba(0, 0, 80, 1);    
-    background-color: #3a5795;    
-    color:#ffffff;
-    font-weight: bold;    padding: 2px;    width: 100px;
-    text-align: center;    line-height: 1.5;    height: 30px;
-}
-table.headoptions th.roomname {
-    cursor: pointer;
-}
-table.headoptions td, table.roomoptions td {
-    width: 100px;
-    color:#000000;
-    text-align: center;
-    border-right: 1px solid #999999;
-    border-bottom: 1px solid #999999;
-}
-table.roomoptions td.customedit, table.headoptions th.customedit {
-    text-align: center; 
-    width: 5%;    
-}
-table.roomoptions td.customname, table.headoptions th.customname {
-    text-align: center; 
-    width: 10%;    
-}
-
-table.roomoptions td.thingname, table.headoptions th.thingname {
-    text-align: left; 
-    width: 20%;    
-    border-left: 1px solid #999999;
-    font-weight: bold;
-    border-left: 1px solid #999999;    
-    border-right: 1px solid #999999;
-}
-
-table.roomoptions tr.showrow {
-    height: 24px;
-    background-color: #ffffff;
-}
-table.roomoptions tr.showrow.odd {
-    background-color: #cccccc;
-}
-table.roomoptions tr.hiderow {
-    display: none;
-}
-
-table.showid .thingname, table.showid .thingarr, table.showid .infotype, table.showid .infoid, table.showid .infonum {
-    padding-left: 5px;
-    text-align: center; 
-    width: 10%;  
-    font-weight: normal;
-    border-left: 1px solid #999999;    
-    border-bottom: 1px solid #999999;
-}
-table.showid td.thingname {
-    font-weight: bold;
-    text-align: left; 
-    width: 20%;  
-}
-table.showid td.thingarr {
-    text-align: left; 
-    width: 30%;  
-}
-table.showid td.infotype {
-    text-align: center; 
-    width: 10%;  
-}
-table.showid td.infoid {
-    text-align: left; 
-    width: 30%;  
-}
-table.showid td.infonum, table.showid th.infonum {
-    border-right: 1px solid #999999;
-}
-table.showid th.thingname, table.showid th.thingarr, table.showid th.infotype, table.showid th.infoid, table.showid th.infonum {
-    font-weight: bold;
-    font-size: 14pt;
-    border-top: 1px solid #999999;
-}
-div.infopage {
-    margin-left: 20px;
-    width: 85%;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    border: 1px solid black;
-    padding: 10px;
-}
-div.returninfo {
-    margin-left: 20px;
-    background-color: #cccccc;
-    font-size: 14px;
-    text-align: center;
-    font-weight: bold;
-    display: inline-block;
-    width: 200px; height: 32px;
-    padding-top: 10px;
-}
-div.returninfo a {
-    text-decoration: none;
-}
-
-/* only adjust for scrollbar on screens with hover */
-@media only screen and (hover: hover) {
-    table.roomoptions tbody {
-        overflow-y: scroll;  width: 95%;
-    }
-    table.headoptions thead th.roomname:last-child {
-        padding-right: 12px;
-    }
-}
-span.typeopt {
-    font-weight: normal;    font-family: "Raleway", serif;    font-style: italic;
-    color: #666666;
-}
-div.processoptions {
-    margin-left: 0px; margin-top: 0px;    
-    padding-top: 10px;
-    background-color: white;
-    width: 550px;
-    display: inline-block;
-}
-
-/* buttons */
-input {
-    background-repeat: no-repeat;
-}
-div.buttons, form.buttons {
-    display: inline;
-}
-input.submitbutton, input.resetbutton, input.authbutton, 
-div.restoretabs, div.formbutton {
-    background-color: #3a5795;
-    width: 150px; height: 50px; margin-left: 10px; margin-right: 30px;
-    cursor: pointer;    border: none;
-    color: #eeeeee;    text-align: center;    font-weight: normal;
-    border-bottom: 4px solid rgba(0, 0, 0, 0.8); 
-    border-right: 4px solid rgba(0, 0, 0, 0.8); 
-    font-size: 14pt;
-}
-/* style restore tabs like a button - notice adjustments for border and vertical centering */
-div.restoretabs, div.formbutton {
-    display: inline-block;
-    padding-top: 14px; padding-right: 2px;
-    width: 90px; height: 24px;
-    margin-left: 2px; margin-right: 2px;
-    font-size: 12pt;
-}
-input.resetbutton, input.submitbutton {
-    padding-right: 2px;
-    padding-top: 8px;
-    width: 90px; height: 42px;
-    margin-left: 2px; margin-right: 2px;
-    font-size: 12pt;
-}
-
-div.restoretabs.hidden, div.thing.hidden.catalog-thing {
-    display: none;
-}
-div.filteroption div.smallbutton {
-    padding: 4px;
-    height: 0.8em;
-    width: 60px;
-    display: inline-block;
-    font-size: 12pt;
-    background-color: #cccccc;
-    border-left: solid 2px gray;
-    border-top: solid 2px gray;
-    border-right: solid 3px black;
-    border-bottom: solid 3px black;
-    margin-left: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-    cursor: pointer;
-}
-
-div.filteroption div.smallbutton:hover {
-    background-color: black;
-    color: white;
-}
-
-div.modalbox {
-    display: inline-block;
-    text-align: left;
-    padding: 5px;
-    background-color: rgba(255, 255, 246, 1);
-    color: rgba(0, 0, 0, 1);
-    font-size: 12pt;
-    position: absolute; 
-    z-index: 99999;
-}
-
-td.thingname.clickable:hover {
-    cursor: pointer;
-    background-color: blue;
-    font-style: normal;
-    color: white;
-}
-
-div.modalbuttons {
-    margin-top: 5px;
-}
-
-button.dialogbtn {
-    background-color: #3a5795;
-    display: inline;
-    width: 100px; height: 36px; margin-left: 5px; margin-right: 5px;
-    cursor: pointer;    border: none;
-    color: #eeeeee;    text-align: center;    font-weight: normal;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.8); 
-    border-right: 2px solid rgba(0, 0, 0, 0.8); 
-    font-size: 12pt;
-}
-
-/* don't need to display this anymore since use clock and panel click instead */
-/* but the div needs to be in the php file to make the js work */
-/* uncomment this to show the display link */
-div.panel div.restoretabs {
-    font-size: 12pt;
-    color: rgba(0,0,0,0.1);
-    width: auto; height: 20px; margin-top: 1px;
-    border: 0px; text-align: right;
-    background-color: rgba(0,0,0,0.1);
-    position: absolute; right: -1px; bottom: -1px;
-}
-input.authbutton {
-    background-color: #000099;
-    margin: 0;
-    margin-left: 10px;
-    width: 250px;
-}
-input.submitbutton:hover, input.resetbutton:hover, 
-input.authbutton:hover, div.restoretabs:hover, div.formbutton:hover {
-    font-weight: bold;    color: #ffffff;
-    /* border-left: 4px solid rgba(126, 126, 126, 0.8);
-    border-bottom: 0px; 
-    border-right: 0px; */
-}
-div.sitebutton {
-    background: #ffffff;     
-    display: inline-block; 
-    position: relative;
-    font-size: 14pt;
-    font-weight: bold;
-}
-
-div.formbutton a {
-    text-decoration: none;
-    font-size: inherit;
-    color: #ffffff;
 }
 
 /* all things look like this */  
@@ -626,60 +54,52 @@ div.thing {
     cursor: default;
     width: auto; 
     height: auto;
+    z-index: 1;
 
     transform: scale(1.0);
-    -ms-transform: scale(1.0);
     -moz-transform: scale(1.0);
-    -o-transform: scale(1.0);
     -webkit-transform: scale(1.0);
     transform-origin: 0 0;
-    -ms-transform-origin: 0 0;
     -moz-transform-origin: 0 0;
-    -o-transform-origin: 0 0;
     -webkit-transform-origin: 0 0;
-    z-index: 2;
 }
 div.thing:hover{
     position: relative;
-    box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.50);
-    -moz-box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.50);
-    -webkit-box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.50); 
-    transition-duration: .2s;
-    -webkit-transition-duration: .2s;
+    box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.70);
+    -moz-box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.70);
+    -webkit-box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.70); 
 }
 
 div.thing.switch-thing, div.thing.switchlevel-thing, div.thing.bulb-thing {
     height: auto;
     width: auto;
 }
-div.thing.catalog-thing {
-    display: inline-block;
-    width: 120px;
-}
 
 /* styling defaults without state or specific thing subtypes */
 div.switch, div.bulb, div.light, div.switchlevel, div.momentary, div.motion, div.lock, 
-div.contact, div.music, div.presence, div.piston, div.valve, div.door, div.temperature {
+div.contact, div.music, div.presence, div.piston, div.valve, div.overlay div.door, 
+div.temperature, div.overlay div.themode, div.shm, div.hsm {
     display: inline-block;
     background-repeat: no-repeat;
     padding: 0px 0;
     margin: 0;
     cursor: default;
-    height: auto;
 }
 
 div.switch, div.bulb, div.light, div.switchlevel, div.momentary, div.motion, div.lock, 
 div.contact, div.music, div.presence, div.piston, div.valve, div.overlay div.door,
-div.overlay.themode div.themode {
+div.overlay div.themode, 
+div.temperature-thing, div.thingname.temperature {
     width: 120px;
 }
-
-div.switch.on, div.switch.off, div.light.on, div.light.off,
-div.presence.present, div.presence.absent,
-div.valve.open, div.valve.closed, div.momentary.on, div.momentary.off {
-    height: 112px;
+div.shm, div.hsm {
+    width: 140px;
 }
 
+/* heights for things with icons */
+div.switch.on, div.switch.off, div.light.on, div.light.off,
+div.presence.present, div.presence.absent,
+div.valve.open, div.valve.closed, div.momentary.on, div.momentary.off,
 div.lock.locked, div.lock.unlocked, div.lock.unknown, div.motion.active, div.motion.inactive,
 div.contact.open, div.contact.closed {
     height: 112px;
@@ -687,32 +107,20 @@ div.contact.open, div.contact.closed {
 
 /* items that have a pointer */
 div.switch, div.bulb, div.light, div.switchlevel, div.momentary, 
-div.lock, div.mode.themode, div.piston, div.valve, div.routine.label {
+div.lock, div.mode.themode, div.piston, div.valve, div.routine.label,
+div.level, div.door.garage,
+div.custom-thing div.custom.post,
+div.piston-thing, div.music.musicmute, div.overlay.music-controls div.music,
+div.door.garage.closed, div.door.garage.closing, div.door.garage.open, div.door.garage.opening,
+div.thermofan, div.thermomode,
+div.valve.startZone, div.valve.pause, div.piston-thing div.pistonName,
+div.shm.state, div.hsm.state
+{
     cursor: pointer;
 }
-
-/* the name of the thing - must be after the above heights */
-/* added catalog-thing div.thingname to ensure catalog shows properly */
-div.thingname, div.thingname.motion, div.thingname.contact, 
-div.thingname.lock, div.thingname.piston, catalog-thing div.thingname {
-    background-color: #303050;
-    font-size: 11pt;
-    text-align: center;
-    color: #ffffff;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    border-bottom: 5px solid rgba(0,0,0,0.3);
-    height: 30px;
+div.contact.door {
     cursor: default;
 }
-div.thingname:hover {
-    background-color: #5050a0; 
-    color: #cccccc;
-}
-div.thingname.door {
-    width: 100%;
-}
-
 
 /* style the on and off states of things to not show up */
 /* set size to show text to avoid funky resizing, but use transparent color */
@@ -720,43 +128,40 @@ div.open, div.closed, div.inactive, div.active, div.locked, div.unlocked, div.un
 div.on, div.off, div.present, div.absent, div.firing, div.piston.pistonName {
     font-size: 11pt;
     background-position: center center;
-    /*color: rgba(255,255,255,0.01);*/
 }
 
 /* alter the thermostat on and off to show since we don't use an icon here */
-div.thermostat.thermomode.off, div.thermostat.thermofan.off,
-div.thermostat.thermomode.on, div.thermostat.thermofan.on {
-	font-size: 11pt;
-        color: #ffffff;
+div.thermomode.auto, div.thermomode.off,
+div.thermomode.heat, div.thermomode.cool,
+div.thermofan.off, div.thermofan.on, div.thermofan.circulate {
+    font-size: 11pt;
+    background-image: none;
+    background-position: center center;
+    color: rgba(255, 255, 255, 1);
 }
 
-/* contact styling - note we changed to generic contact */
-div.contact.open {
+/* this section is for specific thing icons and texts */
+/* the transparency is set to near zero so text doesn't show */
+div.contact.open, div.custom.open {
     background-image: url('icons/opencontact.png');
     color: rgba(255, 255, 255, 0.01);
 }
-div.contact.closed {
+div.contact.closed, div.custom.closed {
     background-image: url('icons/closecontact.png');
     color: rgba(255, 255, 255, 0.01);
 }
-div.contact.mat.open {
+div.contact.mat.open, div.custom.mat.open {
     background-image: url('icons/matempty.png');
     color: rgba(255, 255, 255, 0.01);
-    background-size: 120px;
+    background-size: 80px;
 }
-div.contact.mat.closed {
+div.contact.mat.closed, div.custom.mat.closed {
     background-image: url('icons/matfull.png');
     color: rgba(255, 255, 255, 0.01);
-    background-size: 120px;
+    background-size: 80px;
 }
 
 /* specific contact types one might find */
-div.door.garage {
-    cursor: pointer;
-}
-div.contact.door {
-    cursor: default;
-}
 div.door.open, div.contact.door.open {
     background-image: url('icons/opendoor.png');
     color: rgba(255, 255, 255, 0.01);
@@ -768,36 +173,28 @@ div.door.closed, div.contact.door.closed {
     background-size: 40px;
 }
 /* hide the contact part of garage doors that include an embedded contact sensor */
-/*div.door-thing div.overlay.contact, div.garage.door.contact {*/
 div.door-thing.garage div.contact {
     display: none;
 }
-div.contact.window.open {
+div.contact.window.open, div.custom.window.open {
     background-image: url('icons/openwindow.png');
     color: rgba(255, 255, 255, 0.01);
 }
-div.contact.window.closed {
+div.contact.window.closed, div.custom.window.closed {
     background-image: url('icons/closewindow.png');
     color: rgba(255, 255, 255, 0.01);
 }
-div.door.garage.open {
+div.door.garage.open, div.door.garage.opening {
     background-image: url('icons/garage-opened.png');
     color: rgba(255, 255, 255, 0.01);
     background-size: 80px;
     height: 112px;
-    cursor: pointer;
 }
-div.door.garage.closed {
+div.door.garage.closed, div.door.garage.closing {
     background-image: url('icons/garage-closed.png');
     color: rgba(255, 255, 255, 0.01);
     background-size: 80px;
     height: 112px;
-    cursor: pointer;
-}
-
-/* custom tiles*/
-div.custom-thing div.custom.post {
-    cursor: pointer;
 }
 
 /* fill tile with valve image */
@@ -809,7 +206,6 @@ div.valve.open {
     background-color: rgba(27,177,75,0.3);
     color: rgba(255, 255, 255, 0.01);
     height: 112px;
-    
 }
 div.valve.closed {
     background-image: url('icons/sprinkler-off.png');
@@ -817,12 +213,8 @@ div.valve.closed {
     color: rgba(255, 255, 255, 0.01);
     height: 112px;
 }
-div.valve.switch, div.valve.contact, div.valve.stopWatering, div.valve.log  {
-    display: none;
-}
 div.valve.startZone, div.valve.pause {
     background-color: rgba(50,50,50,1);
-    cursor: pointer;
 }
 /* special handling of garage entry which is a door */
 div.contact.garage.entry.open {
@@ -849,28 +241,6 @@ div.motion.active {
     background-color: rgba(0, 51, 204, 0);
     color: rgba(255, 255, 255, 0.01);
 }
-
-/*
-div.motion.battery, div.contact.battery, 
-div.lock.battery {
-    height: 0px; font-size: 9pt; color: #ffffff;
-	display: none;
-}
-div.motion.battery::before, div.contact.battery::before, div.lock.battery:before {
-    content: "Battery: ";
-}
-div.motion.battery::after, div.contact.battery::after, div.lock.battery::after {
-    content: " %";
-}
-*/
-/*
-div.motion.temperature::before {
-    content: "T: ";
-}
-div.motion.temperature::after {
-    content: " degF";
-}
-*/
 
 /* lock styling */
 div.lock.locked {
@@ -913,25 +283,7 @@ div.switch.level {
     display: none;
 }
 
-/* old style power and energy is commented out */
-/*div.switch.energy, div.switchlevel.energy {
-    height: 14px; font-size: 9pt; 
-    background-color: rgb(51,204,0); 
-    color: #ffffff;
-}
-div.switch.power, div.switchlevel.power {
-    height: 14px; font-size: 9pt; 
-    background-color: rgb(51,204,0); 
-    color: #ffffff;
-}
-div.switch.energy::before, div.switchlevel.energy:before {
-    content: "E (KwH): ";
-}
-div.switch.power::before, div.switchlevel.power:before {
-    content: "P (W): ";
-}*/
 /* new style uses overlay to put in bottom right corner */
-
 div.overlay.power, div.overlay.energy {
 	position: absolute; top: 32px; left: 0px;
 	z-index: 100;
@@ -1013,8 +365,6 @@ div.colorTemperature-dn, div.hue-dn, div.saturation-dn {
     color: rgba(255, 255, 255, 0.01);
     background-position: -32px 0px;
 	background-size: auto;
-/*    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px; */
     box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
     -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
     -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
@@ -1026,8 +376,6 @@ div.colorTemperature-up, div.hue-up, div.saturation-up {
     color: rgba(255, 255, 255, 0.01);
     background-position: -272px -2px;
 	background-size: auto;
-/*    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px; */
     box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
     -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
     -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
@@ -1037,20 +385,14 @@ div.colorTemperature-up, div.hue-up, div.saturation-up {
 div.music.level, div.music.vol {
     width: 99%;
 }
-div.music-controls {
-    cursor: pointer;
-}
 div.music-previous, div.music-pause, div.music-stop, div.music-play, div.music-next {
-    /*background-image: url("media/Media-Player-Buttons.png");*/
     color: rgba(255, 255, 255, 0.01);
     background-size: 38px;
     display: inline-block;
     background-repeat: no-repeat;
     height:38px; 
     width: 32px;
-    /*background-position: -160px -4px;*/
     margin-top: 5px;
-    /*position: absolute;*/
 }
 div.music-pause {
     background-image: url("media/pause.png");
@@ -1074,11 +416,7 @@ div.thing.thermostat-thing{
     height: auto;
 }
 
-/*div.overlay.temperature, div.overlay.feelsLike {
-    display: inline-block;
-}*/
-
-/* individual temperature value inside a thermostat */
+/* round temperature value inside a thermostat */
 div.thermostat.temperature,
 div.overlay.temperature div.temperature,
 div.weather.temperature, div.weather.feelsLike {
@@ -1100,51 +438,48 @@ div.weather.temperature, div.weather.feelsLike {
     -moz-border-radius: 50%;
 }
 
-
-div.thermostat.thermofan, div.thermostat.thermomode {
-    cursor: pointer;
-    height: auto;
-}
-div.thermostat.thermomode.off, div.thermostat.thermofan.off,
-div.thermostat.thermomode.on, div.thermostat.thermofan.on,
-div.thermostat.thermostate, div.thermostat.humidity  {
+div.thermomode.off, div.thermofan.off,
+div.thermomode.on, div.thermofan.on,
+div.thermostate, div.thermostat.humidity  {
 	background-color: #333333;
 	font-size: 11pt;
 	height: auto;
         margin: 0; padding: 0;
         color: #ffffff;
 }
-div.thermostat.thermomode.on, div.thermostat.thermofan.on {
+div.thermomode.on, div.thermofan.on {
     background-color: #3333ff;
 }
-div.thermostat.thermomode.heat {
+div.thermomode.heat {
     background-color: #ff3300;
 }
-div.thermostat.thermomode.cool {
+div.thermomode.cool {
     background-color: #3333ff;
 }
-div.thermostat.thermomode.auto, div.thermostat.thermofan.auto {
+div.thermomode.auto, div.thermofan.auto {
     background-color: #009999;
 }
 div.thermostat.humidity {
     background-color: #666666;
 }
-div.thermostat.thermostate, div.thermostat.humidity {
-    cursor: default;
-}
-div.thermostat.thermofan::before {
+div.thermostat.thermofan::before,
+div.custom.thermofan::before {
     content: "Fan: ";
 }
-div.thermostat.thermomode::before {
+div.thermostat.thermomode::before,
+div.custom.thermomode::before {
     content: "Mode: ";
 }
-div.thermostat.thermostate::before {
+div.thermostat.thermostate::before,
+div.custom.thermostate::before {
     content: "State: ";
 }
-div.thermostat.humidity::before {
+div.thermostat.humidity::before,
+div.custom.humidity::before {
     content: "Humidity: ";
 }
-div.thermostat.humidity::after {
+div.thermostat.humidity::after,
+div.custom.humidity::after {
     content: "%";
 }
 
@@ -1160,30 +495,14 @@ div.colorTemperature-val, div.hue-val, div.saturation-val, div.vol-val {
     width: 72px;
     height: 26px;
     padding-top: 6px;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 1);
     border: 0px;
 }
-/* hide hue & sat & level for bulbs because we now have color pickers */
-div.overlay.hue, div.overlay.saturation, 
-div.switch-thing div.overlay.colorTemperature,
-div.bulb-thing div.overlay.colorTemperature {
-    display: none;
-}
-div.overlay.color {
-    position: absolute;
-}
-
 div.heat-val {
     background-color: #cc3300;
-    box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);	
 }
 div.cool-val {
     background-color: #0033cc;
-    box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);	
 }
 div.colorTemperature-val, div.hue-val, div.saturation-val {
     background-color: #ffffff;
@@ -1191,14 +510,12 @@ div.colorTemperature-val, div.hue-val, div.saturation-val {
 }
 div.thermostat.thermomode, div.thermostat.thermofan, div.thermostat.thermofan.on,
 div.thermostat.thermostate, div.thermostat.humidity {
-    width: 98%;
-    padding-left: 1%; 
-    padding-right: 1%;
+    width: 100%;
+}
+div.thing.temperature-thing {
+    height: 150px;
 }
 
-div.thing.temperature-thing {
-    height: 147px;
-}
 /* hover over the adjustment arrows */
 div.heat-up:hover, div.heat-dn:hover, 
 div.cool-up:hover, div.cool-dn:hover,
@@ -1219,11 +536,8 @@ div.thing.music-thing {
     width: 180px;
     height: auto;
 }
-div.thingname.music {
-    width: 180px;
-}
 /* use italic serif font for music titles and a custom size */
-div.music.track {
+div.music.track, div.custom.track {
     font-family: "Raleway",serif;
     font-size: 11pt;
     font-style: italic;
@@ -1233,44 +547,32 @@ div.music.track {
     border-bottom: none;
     background-color: rgba(80, 80, 80, 0.7);
 }
-div.music.musicstatus, div.music.musicmute {
+div.music.musicstatus, div.music.musicmute, div.custom.musicstatus, div.custom.musicmute {
     height: 24px;
-    width: 180px;
+    width: 100%;
     font-size: 11pt;
     background-color: rgba(80, 80, 80, 0.7);
 }
-/*div.music div.level-val, div.music div.vol-val {
-    width: 60%;
-}*/
 
 /* pistons */
-div.piston-thing, div.music.musicmute  {
-    cursor: pointer;
-}
-div.piston.webcore {
-    display: none;
-}
-div.piston.pistonName {
+div.pistonName {
     height: 112px;
     color: rgba(102,102,102,0.01);
     background-color: rgba(102, 102, 102, 1);
     background-image: url('icons/piston.png');
+    width: 100%;
 }
-div.piston.pistonName.firing {
+div.pistonName.firing {
     background-image: url('icons/pistonfiring.png');
     color: rgba(255, 255, 255, 0.01);
 }
+
 /* weather styling */
 div.thing.weather-thing {
     background-color: rgba(0,0,0,0.01);
     width: 240px;
     text-align: center;
     height: auto;
-}
-div.thingname.weather {
-    width: 92%;
-    padding-left: 4%; 
-    padding-right: 4%;
 }
 div.overlay.temperature div.weather.temperature, div.overlay.feelsLike div.weather.feelsLike {
     display: inline-block;
@@ -1283,26 +585,25 @@ div.overlay.temperature div.weather.temperature, div.overlay.feelsLike div.weath
     text-align: center;
     height: 70px;
     width: 70px;
-    padding: 4px 3px 0 3px;
-    margin-top: 10px;
-    margin-bottom: 10px;
     margin-left: 10px;
     margin-right: 10px;
     border-radius: 50%;
-    font-size: 20px;
+    font-size: 28px;
     line-height: 55px;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
 }
-div.weather.feelsLike::before {
+div.weather.feelsLike::before,
+div.custom.feelsLike::before {
     content: "Like: ";
     font-size: 8pt;
 }
-div.weather img {
+div.weather img, div.custom img {
     margin-left: 15px;
     margin-right: 15px;
 }
-div.weather.wind::before {
+div.weather.wind::before,
+div.custom.wind::before {
     content: "Wind: ";
 }
 div.weather.wind::after {
@@ -1314,21 +615,23 @@ div.weather.humidity::before {
 div.weather.percentPrecip::before {
     content: "Rain: ";
 }
-div.weather.humidity::after, div.weather.percentPrecip::after {
+div.weather.humidity::after, div.weather.percentPrecip::after,
+div.custom.percentPrecip::after {
     content: "%";
 }
-div.weather.illuminance::after {
+div.weather.illuminance::after,
+div.custom.illuminance::after {
     content: " Lux";
 }
-div.weather.sunriseset {
+div.weather.sunrise {
     margin-top: 10px;
 }
-div.weather.sunriseset, div.weather.humidity,
+div.weather.humidity, div.weather.sunrise, div.weather.sunset,
 div.weather.wind, div.weather.percentPrecip, div.weather.alert, div.weather.illuminance {
     background-color: #333333;
     margin-bottom: 0px;
 }
-div.weather.timeZoneOffset, div.weather.alertKeys,
+div.weather.sunriseset, div.weather.timeZoneOffset, div.weather.alertKeys,
 div.weather.sunriseDate, div.weather.sunsetDate,
 div.weather.ultravioletIndex, div.weather.lastUpdate {
     display: none;
@@ -1336,51 +639,71 @@ div.weather.ultravioletIndex, div.weather.lastUpdate {
 div.weather.weatherIcon, div.weather.forecastIcon {
     display: inline-block;
 }
-div.temperature-thing, div.thingname.temperature {
-    width: 120px;
+div.weather-thing div.overlay {
+    display: inline;
+    padding-right: 0px;
 }
-
-/* blank tiles styling */
-div.thing.blank-thing {
-    border: 0px none;
-    padding: 0;
-    background-color: rgba(255,255,255,0.01);
-    color: #ffffff;
-    box-shadow: none;
-    width: auto;
-    height: auto;
+div.weather-thing div.overlay.temperature, div.weather-thing div.overlay.feelsLike {
+    display: inline;
+    padding-right: 4px;
 }
-div.blank:hover {
-    background-color: rgba(255,255,255,0.01);
+div.overlay.weatherIcon div.weather, div.overlay.forecastIcon div.weather {
+    background-position-y: 8px;
+    width: 80px;
+    height: 74px;
+    padding-top: 6px;
+    margin-left: 8px; margin-right: 8px;
+    color: rgba(0, 0, 0, 1);
+    background-size: 80px;
 }
-div.blank.size.b1x1, div.blank.size.b1x2, div.blank.size.b2x1, div.blank.size.b2x2 {
-    width: 120px;    height: 160px;
-    font-size: 0px;    padding-left: 0px;
-}
-div.blank.size.h1x1, div.blank.size.h1x2, div.blank.size.h2x1, div.blank.size.h2x2 {
-    width: 120px;    height: 160px;
-    font-size: 0px;    padding-left: 0px;
-}
-/* add special sizes for the b1x2, b2x1, and b2x2 tiles  */
-div.blank.size.b2x1, div.blank.size.b2x2 {
-    width: 244px;
-}
-div.blank.size.h2x1, div.blank.size.h2x2 {
-    width: 244px;
-}
-div.blank.size.b1x2, div.blank.size.b2x2 {
-    height: 320px;
-}
-div.blank.size.h1x2, div.blank.size.h2x2 {
-    height: 320px;
-}
-div.thing.blank-thing:hover {
+div.weather-thing div.overlay.name, div.weather-thing div.overlay.city {
+    display: none;
     position: relative;
-    box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.50);
-    -moz-box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.50);
-    -webkit-box-shadow: 0px 0px 41px rgba(0, 0, 0, 0.50); 
-    transition-duration: .2s;
-    -webkit-transition-duration: .2s;
+}
+div.overlay.weatherIcon div.clear, div.overlay.forecastIcon div.clear {
+    background-image: url("media/clear.png");
+}
+div.overlay.weatherIcon div.mostlysunny, div.overlay.forecastIcon div.mostlysunny {
+    background-image: url("media/mostlysunny.png");
+}
+div.overlay.weatherIcon div.partlysunny, div.overlay.forecastIcon div.partlysunny {
+    background-image: url("media/partlysunny.png");
+}
+div.overlay.weatherIcon div.rain, div.overlay.forecastIcon div.rain {
+    background-image: url("media/rain.png");
+}
+div.overlay.weatherIcon div.chancerain, div.overlay.forecastIcon div.chancerain {
+    background-image: url("media/rain.png");
+}
+div.overlay.weatherIcon div.snow, div.overlay.forecastIcon div.snow {
+    background-image: url("media/snow.png");
+}
+div.overlay.weatherIcon div.chancesnow, div.overlay.forecastIcon div.chancesnow {
+    background-image: url("media/snow.png");
+}
+div.overlay.weatherIcon div.tstorms, div.overlay.forecastIcon div.tstorms {
+    background-image: url("media/tstorms.png");
+}
+div.overlay.weatherIcon div.chancetstorms, div.overlay.forecastIcon div.chancetstorms {
+    background-image: url("media/tstorms.png");
+}
+div.overlay.weatherIcon div.cloudy, div.overlay.forecastIcon div.cloudy {
+    background-image: url("media/cloudy.png");
+}
+div.overlay.weatherIcon div.mostlycloudy, div.overlay.forecastIcon div.mostlycloudy {
+    background-image: url("media/mostlycloudy.png");
+}
+div.overlay.weatherIcon div.partlycloudy, div.overlay.forecastIcon div.partlycloudy {
+    background-image: url("media/partlycloudy.png");
+}
+div.overlay.weatherIcon div.windy, div.overlay.forecastIcon div.windy {
+    background-image: url("media/windy.png");
+}
+div.overlay.weatherIcon div.sleet, div.overlay.forecastIcon div.sleet {
+    background-image: url("media/rain.png");
+}
+div.overlay.weatherIcon div.fog, div.overlay.forecastIcon div.fog {
+    background-image: url("media/fog.png");
 }
 
 /* clock styling */
@@ -1399,59 +722,45 @@ div.clock.time {
     font-size: 36pt;
     margin-top: 12px;
 }
-div.clock.tzone{
-    display:none;
-}
-
-/* mode and routine styling */
-div.thingname.mode {
-    display: none;
-}
-div.thing.mode-thing, div.thing.shm-thing {
-    width: auto;
-    height: 150px;
-}
-div.mode1x1, div.mode1x2 {
-    width: 120px;
-}
-div.mode2x1, div.mode2x2 {
-    width: 246px;
-}
-div.mode1x2, div.mode2x2 {
-    height: 326px;
-}
-div.mode.themode, div.shm.state {
-    font-size: 20pt;    margin-top: 10px;
-    cursor: pointer;
-}
-div.shm.state.off, div.shm.state.stay, div.shm.state.away {
-    color: rgba(255, 255, 255, 1);
-}
-div.shm.state {
-    background-size: 70px;
-    background-repeat: no-repeat;
-    height: 90px;
-    background-position-x: center;
-    background-position-y: bottom;
-}
-div.shm.state.stay {
-    background-image: url('icons/security-blue.png');
-}
-div.shm.state.away {
-    background-image: url('icons/security-red.png');
-}
-div.shm.state.off {
-    background-image: url('icons/security-green.png');
-}
-div.mode-thing div.name {
-    font-size: 12pt;    margin-top: 30px;
+div.mode.themode {
+    font-size: 20pt;
+    margin-top: 10px;
+    height: 24px;
 }
 div.mode-thing div.sitename {
     margin-top: 45px;
+    height: auto;
+}
+div.mode-thing div.overlay.themode {
+    height: auto;
+}
+div.shm.state, div.hsm.state, div.custom.state {
+    font-size: 18pt;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 1);
+    background-size: 70px;
+    background-repeat: no-repeat;
+    height: 102px;
+    background-position-x: center;
+    background-position-y: bottom;
+}
+div.shm.state.stay, div.hsm.state.armedHome, div.hsm.state.armedNight,
+div.custom.state.stay, div.custom.state.armedHome, div.custom.state.armedNight {
+    background-image: url('icons/security-blue.png');
+}
+div.shm.state.away, div.hsm.state.armedAway,
+div.custom.state.away, div.custom.state.armedAway {
+    background-image: url('icons/security-red.png');
+}
+div.shm.state.off, div.hsm.state.disarmed, div.hsm.state.allDisarmed,
+div.custom.state.off, div.custom.state.disarmed, div.custom.state.allDisarmed {
+    background-image: url('icons/security-green.png');
 }
 
-div.routine.label {
-    font-size: 18pt;    margin-top: 20px;
+/* SmartThings routines */
+div.routine.label, div.custom.label {
+    font-size: 18pt;
+    margin-top: 20px;
 }
 
 /* images */
@@ -1471,55 +780,38 @@ div.image.url {
     background-color: #000000;
     background-repeat: no-repeat;
     background-position: center;
-    
-
 }
 
 /* presence styling */
-div.presence.present {
+div.presence.present, div.custom.present {
     background-image: url('icons/boypresent.png');
     background-color: rgba(255, 255, 255, 0.6);
     color: rgba(255, 255, 255, 0.01);
 }
-div.presence.absent {
+div.presence.absent, div.custom.absent {
     background-image: url('icons/boyabsent.png');
     background-color: rgba(255, 255, 255, 0.3);
     color: rgba(255, 255, 255, 0.01);
 }
 
-/* style for modal dialog boxes - presently not used */
-.modalhide, .modalshow {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 9999; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 40%; /* Full width */
-    height: 60%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    color: #ffffee;
-}
-.modalshow {
-    display: block;
-}
-
-div.bulb.color, div.light.color {
+div.bulb.color, div.light.color, div.custom.color {
     position: absolute;
     left: 8px;
     top: 44px;
     height: 32px;
     width: 32px;
-    /*border-radius: 50%;*/
     font-size: 12px;
-    /*color: rgba(128,128,128, 0.01);*/
     display: none;
     cursor: pointer;
     z-index: 9999;
 }
 div.bulb.colorMode {
     display: none;
+}
+
+div.bulb-thing div.overlay.color {
+    position: absolute;
+    right: -2px;
 }
 
 div.custom-thing {
@@ -1534,19 +826,8 @@ div.custom.text {
     height: 30px;
     color: rgba(255, 255, 255, 1);
 }
-
-/* do not display these items */
-div.checkInterval, div.switchlevel.checkInterval, div.switchlevel.indicatorStatus, 
-div.switch.checkInterval, div.motion.checkInterval, div.switch.indicatorStatus, 
-div.contact.checkInterval,
-div.switch.colorTemperature, div.lock.checkInterval,
-div.lock.codeChanged, div.lock.lockCodes, div.lock.scanCodes,
-div.lock.codeReport, div.lock.maxCodes, div.lock.maxCodeLength,
-div.lock.minCodeLength, div.lock.codeLength,
-div.thingname.blank, div.thingname.clock,
-div.thingname.image, div.thingname.routine
- {
-    display:none;
+div.custom.name {
+    display: none;
 }
 
 /* for weather illuminance avoid showing T and fix humidity */
@@ -1561,115 +842,9 @@ div.switchlevel.colorTemperature, div.bulb.colorTemperature {
     height: 4px;
 }
 
-div.editlink, div.dellink {
-    border: 2px solid white; 
-    padding: 2px;
-    color: rgba(255, 255, 255, 1);
-    position: absolute; 
-    z-index: 501; 
-    top: 0px;
-    cursor: pointer;
-    font-size: 20px;
-}
-div.editlink {
-    background-color: rgba(0, 102, 102, 1);
-    left: 0px;
-}
-div.dellink {
-    background-color: rgba(255, 0, 0, 1);
-    right: 0px;
-}
-div.editpage, div.delpage, div.addpage {
-    border: 2px solid white; 
-    color: rgba(255, 255, 255, 1);
-    border-radius: 50%;
-    width: 18px; height: 18px;
-    position: absolute; 
-    z-index: 501; 
-    top: 5px;
-    cursor: pointer;
-}
-div.editpage {
-    background-color: rgba(0, 102, 102, 1);
-    left: 0px;
-}
-div.delpage {
-    background-color: rgba(255, 0, 0, 1);
-    right: 0px;
-}
-div.addpage {
-    font-size: 14px;
-    padding: 2px;
-    border-radius: 0;
-    width: 40px; height: 24px;
-    background-color: rgba(0, 102, 102, 1);
-    right: 2px;
-}
-
-/* Example custom settings from Ken's home */
-/* you should remove these since they will likely do nothing */
-
-/* images - can be customized to show any valid jpg or png on the web */
-div.image.url.img1 {
-    background-image: url("/smartthings/garagecam/livingroom.jpg");
-}
-div.image.url.img2 {
-    background-image: url("/smartthings/garagecam/officecam.jpg");
-}
-div.image.url.img3 {
-    background-image: url("/smartthings/garagecam/garagepic.jpg");
-}
-div.image.url.img4 {
-    background-image: url("../media/myhouse.jpg");
-}
-
-/* girl sillhouette for wife's phone */
-div.presence.jana.present {
-    background-image: url('icons/girlpresent.png');
-    color: rgba(255, 255, 255, 0.01);
-}
-div.presence.jana.absent {
-    background-image: url('icons/girlabsent.png');
-    color: rgba(255, 255, 255, 0.01);
-}
-div.motion.family.room.battery {
-    height: 13px; font-size: 9pt; color: #ffffff;
-}
-
-/* smart switch on my rock fountain */
-div.switch.rock.on {
-    background-image: url('icons/rockon.png');
-    background-color: rgba(0, 51, 204, 0);
-    color: rgba(255, 255, 255, 0.01);
-}
-div.switch.rock.off {
-    background-image: url('icons/rockoff.png');
-    background-color: rgba(0, 51, 204, 0);
-    color: rgba(255, 255, 255, 0.01);
-}
-div.switch.screen.on, div.switch.screen.off {
-    height: 80px;
-}
-
-div.switchlevel.screen.switch, div.switchlevel.screen.on, div.switchlevel.screen.off {
-    height: 80px;
-}
-
-/* hide the power and energy for my screen switch */
-div.switchlevel.screen.power, div.switchlevel.screen.energy {
-    display:none;
-}
-
 iframe body {
     margin: 0px;
 }
-/*div.thing.frame-thing {
-    width: auto;
-    height: auto;
-    background: none;
-    box-shadow: none;
-    margin: 0px;
-}*/
 div.thing.frame-thing.weather div.thingname.frame {
     width: 480px;
     margin-left: 13px;
@@ -1684,131 +859,17 @@ div.thing.frame-thing.weather {
 div.thing.frame-thing div.overlay.status {
     display: none;
 }
-/* this custom setting moves power and energy up for my yard switches */
-/* note that I have to also change the size of the wrapper tile to fixed */
-/* alternatively you could change the height of just a specific switch */
-/* to a fixed height of 160 - if you do that you need the id */
-/* and do something like #t-82 where 82 is the ID of the thing you want */
-/*  div.thing.switch-thing, div.thing.switchlevel-thing {
-    height: 160px;
-}
-*/
+
 div.frame.forecast {
     height: 200px;
 }
 
-/*div.switch.yard.energy {
-    position: relative; top: -16px;
-}
-div.switch.yard.power {
-    position: relative; top: -48px;
-}*/
 div.thing.video-thing {
     width: 246px;
     height: 147px;
 }
 div.thingname.video {
     display: none;
-}
-
-div.overlay.battery {
-	position: absolute;
-	z-index: 10;
-        border: none;
-        background: none;
-	left: 2px;
-	/*top: 2px;*/
-	/*width: 100%;*/
-	height: auto;
-}
-div.overlay.name {
-    position: absolute;
-    display: block;
-    color: rgba(255, 255, 255, 0.01);
-}
-
-div.ovCaption {
-	position: relative;
-	left: 1px;
-	font-size: 10px;
-	text-align: left;
-	color: #ffffee;
-	visibility: hidden;
-}
-div.ovStatus {
-	position: relative;
-	left: 1px;
-	font-size: 12px;
-	text-transform: capitalize;
-	text-align: left;
-	color: #ffffee;
-	visibility: hidden;
-}
-
-div.overlay.battery div.battery {
-  display: block;
-  position: absolute;
-  float: right;
-  right: 2px;
-  /*top: -11px;*/
-  width: 24px;
-  height: 8px;
-  border: 1px solid #fff;
-  border-radius: 2px;
-  padding: 1px;
-  transform: scale(0.8);
-}
-
-div.overlay div.battery:before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 50%;
-    right: 3px;
-    margin-top: -3px;
-    width: 5px;
-    height: 5px;
-    background: #fff;
-    clip: rect(0, 5px, 5px, 3px);
-    border-radius: 50%;
-}
-
-div.ovbLevel {
-    height: 100%;
-	font-size: 0px;
-    background: #fff;
-    border-radius:  2px;
-	width: 2%;
-}
-div.ovbLevel.L90{
-    background: #ffffee;
-}
-div.ovbLevel.L80{
-    background: #ffffc6;
-}
-div.ovbLevel.L70{
-    background: #ffff00;
-}
-div.ovbLevel.L60{
-    background: #ffee00;
-}
-div.ovbLevel.L50{
-    background: #ffcc00;
-}
-div.ovbLevel.L40{
-    background: #ff993f;
-}
-div.ovbLevel.L30{
-    background: #ff663f;
-}
-div.ovbLevel.L20{
-    background: #ff6000;
-}
-div.ovbLevel.L10{
-    background: #ff3f00;
-}
-div.ovbLevel.L0{
-    background: #ff0000;
 }
 
 /* user overlay name for locks instead of title bar */
@@ -1840,150 +901,47 @@ div.overlay {
 div.overlay.level {
     height: 32px;
 }
+
+/* remove slider from regular switches */
 div.switch-thing div.overlay.level {
     display: none;
     height: 0px;
 }
-div.weather-thing div.overlay {
-    display: inline;
+
+/* Example custom settings from Ken's home */
+/* you should remove these since they will likely do nothing */
+
+/* smart switch on my rock fountain */
+div.switch.rock.on {
+    background-image: url('icons/rockon.png');
+    background-color: rgba(0, 51, 204, 0);
+    color: rgba(255, 255, 255, 0.01);
 }
-div.overlay.weatherIcon div.weather, div.overlay.forecastIcon div.weather {
-    background-position-y: 8px;
-    width: 80px;
-    height: 74px;
-    padding-top: 6px;
-    margin-left: 8px; margin-right: 8px;
-    color: rgba(0, 0, 0, 1);
-    background-size: 80px;
-}
-div.overlay.healthStatus {
-    display: none;
+div.switch.rock.off {
+    background-image: url('icons/rockoff.png');
+    background-color: rgba(0, 51, 204, 0);
+    color: rgba(255, 255, 255, 0.01);
 }
 
-/* default weather name and city to not show */
-div.weather-thing div.overlay.name, div.weather-thing div.overlay.city {
-    display: none;
-    position: relative;
+/* my porch has a fan with a light on it so this is a custom setup */
+/* the smart switch has power settings that I ignore */
+div.switch.screen.on, div.switch.screen.off {
+    height: 80px;
+}
+div.switchlevel.screen.switch, div.switchlevel.screen.on, div.switchlevel.screen.off {
+    height: 80px;
+}
+/* hide the power and energy for my screen switch */
+div.switchlevel.screen.power, div.switchlevel.screen.energy {
+    display:none;
 }
 
-/* weather icons */
-div.overlay.weatherIcon div.clear, div.overlay.forecastIcon div.clear {
-    background-image: url("media/clear.png");
-}
-div.overlay.weatherIcon div.mostlysunny, div.overlay.forecastIcon div.mostlysunny {
-    background-image: url("media/partlysunny.png");
-}
-div.overlay.weatherIcon div.partlysunny, div.overlay.forecastIcon div.partlysunny {
-    background-image: url("media/partlysunny.png");
-}
-div.overlay.weatherIcon div.rain, div.overlay.forecastIcon div.rain {
-    background-image: url("media/rain.png");
-}
-div.overlay.weatherIcon div.chancerain, div.overlay.forecastIcon div.chancerain {
-    background-image: url("media/rain.png");
-}
-div.overlay.weatherIcon div.snow, div.overlay.forecastIcon div.snow {
-    background-image: url("media/snow.png");
-}
-div.overlay.weatherIcon div.chancesnow, div.overlay.forecastIcon div.chancesnow {
-    background-image: url("media/snow.png");
-}
-div.overlay.weatherIcon div.tstorms, div.overlay.forecastIcon div.tstorms {
-    background-image: url("media/tstorms.png");
-}
-div.overlay.weatherIcon div.chancetstorms, div.overlay.forecastIcon div.chancetstorms {
-    background-image: url("media/tstorms.png");
-}
-div.overlay.weatherIcon div.cloudy, div.overlay.forecastIcon div.cloudy {
-    background-image: url("media/cloudy.png");
-}
-div.overlay.weatherIcon div.mostlycloudy, div.overlay.forecastIcon div.mostlycloudy {
-    background-image: url("media/mostlycloudy.png");
-}
-div.overlay.weatherIcon div.partlycloudy, div.overlay.forecastIcon div.partlycloudy {
-    background-image: url("media/mostlycloudy.png");
-}
-div.overlay.weatherIcon div.windy, div.overlay.forecastIcon div.windy {
-    background-image: url("media/windy.png");
-}
-div.overlay.weatherIcon div.sleet, div.overlay.forecastIcon div.sleet {
-    background-image: url("media/rain.png");
-}
-
-.ui-slider-horizontal {
-    height: 0.3em; 
-}
-div.modeoptions {
-    background-color: #3a5795;
-    width: auto; height: 24px; margin-left: 20px; margin-right: 0px;
-    cursor: default;    border: none;
-    color: #eeeeee;    text-align: center;    font-weight: normal;
-    border-bottom: 4px solid rgba(0, 0, 0, 0.8); 
-    border-right: 4px solid rgba(0, 0, 0, 0.8); 
-    display: inline-block;
-    padding-top: 14px; padding-left: 16px;
-}
-input.radioopts {
-    cursor: pointer;
-    margin-left: 10px;
-    margin-right: 4px;
-    display: inline-block;
-}
-label.radioopts {
-    cursor: pointer;
-    margin-left: 0px;
-    margin-right: 10px;
-    font-size: 12pt;
-    width: 50px;
-    text-align: left;
-    display: inline-block;
-}
-label.radioopts:hover {
-    font-weight: bold;
-}
-div#opmode {
-    position: absolute;
-    left: 5%; bottom: 5%; width: 600px;
-    font-size: 18pt; text-align: center;
-    color: #cc3300;
-    background-color: white;
-    border: 3px;
-    z-index: 999;
-}
-div.overlay.color .minicolors-theme-default.minicolors {
-    z-index: 999;
-}
-.minicolors-theme-default .minicolors-swatch {
-  top: 2px;
-  left: 30px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-.minicolors-swatch-color {
-  border-radius: 50%;
-}
-.minicolors-position-left .minicolors-panel {
-    left: 60px;
-}
-div.thing .minicolors-theme-default .minicolors-input {
-    display: none;
-}
-
-/* disable commands in general */
-div.overlay._on, div.overlay._off, 
-div.overlay._open, div.overlay._close, 
-div.overlay._onPhysical, div.overlay._offPhysical,
-div.overlay._startmotion, div.overlay._stopmotion, div.overlay._reset {
-    display: none;
-}
-
+/* these settings are for my Stereo and TV both controled via KuKuHarmony  */
+/* They are installed in HP using an Other tile */
 div.other-thing div.switch {
     height: 20px;
     background-color: rgba(50, 50, 50, 1);
 }
-
 div.other-thing.pioneer, div.other-thing.pioneer div.thingname, div.other-thing.lg, div.other-thing.lg div.thingname {
     width: 420px;
     padding-left: 0;
@@ -1997,11 +955,9 @@ div.other-thing.lg div.overlay {
     display: inline-block;
     width: 80px; height: 30px;
     padding-top: 10px;
-    margin: 4px;
     border: 2px solid cyan;
     background-color: rgba(0, 50, 50, 1)
 }
-
 div.other-thing.pioneer div.overlay.healthStatus,
 div.other-thing.pioneer div.overlay.name, 
 div.other-thing.lg div.overlay.healthStatus,
@@ -2009,8 +965,6 @@ div.other-thing.lg div.overlay.name
 {
     display: none;
 }
-
-
 div.other.switch {
     background-image: none;
     height: auto;
@@ -2018,6 +972,8 @@ div.other.switch {
     font-size: 11pt;
     color: rgba(255, 255, 255, 1);
 }
+
+/* these make KuKu harmony things show up correctly */
 div.other-thing div.overlay._on,
 div.other-thing div.overlay._off,
 div.other-thing div.overlay._on,
@@ -2025,20 +981,4 @@ div.other-thing div.overlay._on {
     display: inline-block;
     color: rgba(255,255,255,1);
     font-size: 12pt;
-}
-
-div.jsonid {
-    margin-top: 5px;
-    border-bottom: 1px solid black;
-}
-div.jsondump {
-    background-color: #ffffc6;
-    color: black;
-    margin-left: 10px;
-    margin-right: 10px;
-    border-bottom: 1px solid black;
-}
-div.custom-thing div.post, div.custom-thing div.text {
-    overflow-wrap: break-word;
-    overflow: auto;
 }

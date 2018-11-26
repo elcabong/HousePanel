@@ -89,6 +89,9 @@ $(document).ready(function() {
     // set up option box clicks
     setupFilters();
     
+    // actions for custom tile count changes
+    setupCustomCount();
+    
     setupButtons();
     
     setupSaveButton();
@@ -766,7 +769,7 @@ function setupButtons() {
             $("#blankme").on("click", function(event) {
                $("#blankme").remove(); 
                 priorOpmode = "Operate";
-                event.stopPropagation;
+                event.stopPropagation();
             });
         } else if ( buttonid === "restoretabs") {
             toggleTabs();
@@ -806,9 +809,9 @@ function setupButtons() {
                             filters.push($(this).attr("value")); 
                         }
                     });
-    //                alert(filters);
+                    var newskin = $("#skinid").val();
                     $.post(returnURL, 
-                        {useajax: "savefilters", id: 0, type: "none", value: filters, attr: opmode}
+                        {useajax: "savefilters", id: 0, type: "none", value: filters, attr: newskin}
                     );
                     cancelDraggable();
                     delEditLink();
@@ -819,6 +822,10 @@ function setupButtons() {
                     setupPagemove();
                     delEditLink();
                 } else if ( opmode==="DragDrop" ) {
+                    // show the skin for swapping on main screen
+                    $("div.skinoption").show();
+                    
+                    // set up draggable things and add edit links
                     setupDraggable();
                     addEditLink();
 
@@ -864,8 +871,8 @@ function addEditLink() {
     
     // add links to edit and delete this tile
     $("div.panel > div.thing").each(function() {
-       var editdiv = "<div class=\"editlink\" aid=" + $(this).attr("id") + ">Edit</div>";
-       var deldiv = "<div class=\"dellink\" aid=" + $(this).attr("id") + ">Del</div>";
+       var editdiv = "<div class=\"editlink\" aid=" + $(this).attr("id") + "> </div>";
+       var deldiv = "<div class=\"dellink\" aid=" + $(this).attr("id") + "> </div>";
        $(this).append(editdiv).append(deldiv);
     });
     
@@ -881,14 +888,11 @@ function addEditLink() {
     var editdiv = "<div class=\"addpage\" roomnum=\"new\">Add</div>";
     $("#roomtabs").append(editdiv);
     
-    // show the skin 
-    $("div.skinoption").show();
-    
     $("div.editlink").on("click",function(evt) {
         var thing = "#" + $(evt.target).attr("aid");
-        $(thing + ">div.editlink").remove();
-        $(thing + ">div.dellink").remove();
-        $(thing).draggable("destroy");
+//        $(thing + ">div.editlink").remove();
+//        $(thing + ">div.dellink").remove();
+//        $(thing).draggable("destroy");
         
         var str_type = $(thing).attr("type");
         var tile = $(thing).attr("tile");
@@ -972,9 +976,7 @@ function addEditLink() {
         var roomname = $(evt.target).attr("roomname");
         var thingclass = $(evt.target).attr("class");
         editTile("page", roomname, thingclass, roomnum, "");
-        // editPage(roomnum, roomname, parent);
     });
-    
    
     $("#roomtabs div.addpage").off("click");
     $("#roomtabs div.addpage").on("click",function(evt) {
@@ -998,49 +1000,6 @@ function addEditLink() {
     });    
     
 }
-
-function editPage(roomnum, roomname, parent) {
-
-    var dialog_html = "<div id='pageDialog' class='tileDialog'>";
-    dialog_html+= "<div>Editing Page #" + roomnum + " with Name: " + roomname + "</div>";
-    dialog_html+= "<div>";
-    dialog_html+= "<label>Page Name: </label>";
-    dialog_html+= "<input name=\"pageName\" id=\"pageName\" class=\"editinp\" value=\"" + roomname +"\"></div>";
-    dialog_html+= "<div>";
-    dialog_html+= "<label>Background Image: </label>";
-    var oldname = $("div.panel-"+roomname).css("background-image");
-    dialog_html+= "<input name=\"imageName\" id=\"imageName\" width='80' class=\"editinp\" value=\"" + encodeURI(oldname) +"\"></div>";
-    dialog_html+= "</div>";
-
-    // create a function to display the tile
-    var dodisplay = function() {
-        var pos = {top: 100, left: 200};
-        createModal( dialog_html, "body", true, pos, 
-            // function invoked upon leaving the dialog
-            function(ui, content) {
-                var clk = $(ui).attr("name");
-                if ( clk==="okay" ) {
-                    var newname = $("#pageName").val();
-                    parent.html(newname);
-                    $.post(returnURL, 
-                        {useajax: "pageedit", id: roomnum, type: "none", value: newname, attr: "none"},
-                        function (presult, pstatus) {
-                            console.log("ajax call: status = " + pstatus + " result = "+presult);
-                            if ( pstatus==="success" && !presult.startsWith("error") ) {
-                                // location.reload(true);
-                                console.log(presult);
-                            }
-                        }
-                    );
-                }
-            }
-        );
-    };
-    
-    dodisplay();
-
-}
-
 
 function delEditLink() {
 //    $("div.editlink").off("click");
@@ -1179,6 +1138,89 @@ function setupFilters() {
     });
 }
 
+function setupCustomCount() {
+
+    // define the customs array
+    var customtag = $("tr[type='custom']");
+    var hubstr = $("tr[type='custom']:first td:eq(1)").html();
+    var tdrooms = $("tr[type='clock']:first input");
+    
+    var currentcnt = customtag.size();
+    var initialcnt = currentcnt;
+    var customs = [];
+    
+    var i = 0;
+    customtag.each( function() {
+        customs[i] = $(this);
+        i++;
+    });
+    
+    // get biggest id number
+    var maxid = 0;
+    $("table[class='roomoptions'] tr").each( function() {
+        var tileid = parseInt($(this).attr("tile"));
+        maxid = ( tileid > maxid ) ? tileid : maxid;
+    });
+    maxid++;
+    
+    // this creates a new row
+    function createRow(tilenum, k) {
+        var row = '<tr type="custom" tile="' + tilenum + '" class="showrow">';
+        row+= '<td class="thingname">Custom ' + k + '<span class="typeopt"> (custom)</span></td>';
+        row+= '<td>' + hubstr + '</td>';
+
+        tdrooms.each( function() {
+            var theroom = $(this).attr("name");
+            row+= '<td>';
+            row+= '<input type="checkbox" name="' + theroom + '" value="' + tilenum + '" >';
+            row+= '</td>';
+        });
+        row+= '</tr>';
+        return row;
+    }
+    
+    $("#customcntid").change( function() {
+        
+        // turn on the custom check box
+        var custombox = $("input[type='checkbox'][name='useroptions[]'][value='custom']");
+        if ( !custombox.prop("checked") ) {
+            custombox.click();
+            custombox.prop("checked",true);
+            custombox.attr("checked",true);
+        };
+
+        customtag = $("tr[type='custom']");
+        currentcnt = customtag.size();
+        var newcnt = parseInt($(this).val());
+        // alert("current count= " + currentcnt + " new count = " + newcnt );
+        
+        // remove excess if we are going down
+        if ( newcnt>0 && newcnt < currentcnt ) {
+            for ( var j= newcnt; j < currentcnt; j++ ) {
+                // alert("j = "+j+" custom = " + customs[j].attr("type") );
+                customs[j].detach();
+            }
+        }
+        
+        // add new rows
+        if ( newcnt > currentcnt ) {
+           for ( var k= currentcnt; k < newcnt; k++ ) {
+                var newrow = createRow(maxid, k+1);
+                // alert("inserting new row: " + k + " tile: " + maxid);
+                customs[k] = $(newrow);
+                customs[k-1].after(customs[k]);
+                if ( !customs[k-1].hasClass("odd") ) {
+                    customs[k].addClass("odd");
+                }
+                maxid++;
+            }
+        }
+        
+        // set current count
+        currentcnt = newcnt;
+    });
+}
+
 function toggleTabs() {
     var hidestatus = $("#restoretabs");
     if ( $("#roomtabs").hasClass("hidden") ) {
@@ -1292,6 +1334,7 @@ function updateTile(aid, presult) {
                 // update the content 
                 if (oldvalue || value) {
                     $(targetid).html(value);
+                    // if ( aid=="91" ) { alert("key= " + key + " changed value to: " + value); }
                 }
             }
     });
@@ -1299,6 +1342,10 @@ function updateTile(aid, presult) {
     if ( isclock ) {
         CoolClock.findAndCreateClocks();
     }
+    
+//    if ( aid=="1" && presult["skin"]!==undefined ) {
+//        console.log ( "debugging analog clock: " + strObject(presult) );
+//    }
 }
 
 // this differs from updateTile by calling ST to get the latest data first
@@ -1340,9 +1387,9 @@ function timerSetup(hubs) {
         var token = hub.hubAccess;
         var timerval = 60000;
         if ( hubType==="Hubitat" ) {
-            timerval = 5000;
+            timerval = 10000;
         }
-        console.log("hub #" + hubnum + " timer = " + timerval + " hub = " + strObject(hub));
+        // console.log("hub #" + hubnum + " timer = " + timerval + " hub = " + strObject(hub));
 
         var updarray = ["all", timerval, hubnum, token];
         updarray.myMethod = function() {
@@ -1363,8 +1410,11 @@ function timerSetup(hubs) {
                     {useajax: "doquery", id: that[0], type: that[0], value: "none", attr: "none", hubnum: that[2]},
                     function (presult, pstatus) {
                         if (pstatus==="success" && presult!==undefined ) {
-                            // console.log("Success polling hub #" + that[2] + ". Returned "+ Object.keys(presult).length+ " items: " + strObject(presult));
-
+                            
+//                            if ( that[1] > 20000 ) {
+//                                console.log("Success polling hub #" + that[2] + ". Returned "+ 
+//                                        Object.keys(presult).length+ " items");
+//                            }
                             // go through all tiles and update
                             try {
                             $('div.panel div.thing').each(function() {
@@ -1374,7 +1424,8 @@ function timerSetup(hubs) {
                                     aid = aid.substring(2);
                                     var tileid = $(this).attr("tile");
                                     var bid = $(this).attr("bid");
-                                    if ( bid!=="clockanalog" ) {
+                                    
+                                    if ( bid!=="clockanalogxxx" ) {
                                         var thevalue;
                                         try {
                                             thevalue = presult[tileid];
@@ -1388,7 +1439,7 @@ function timerSetup(hubs) {
                                         if ( thevalue && thevalue.hasOwnProperty("value") ) {
                                             thevalue = thevalue.value;
                                         }
-                                        if ( thevalue ) { updateTile(aid,thevalue); }
+                                        if ( thevalue && thevalue!==undefined ) { updateTile(aid,thevalue); }
                                     }
                                 }
                             });
@@ -1528,7 +1579,7 @@ function updAll(trigger, aid, bid, thetype, hubnum, pvalue) {
 // this used to be done by page but now it is done by sensor type
 function setupPage(trigger) {
     $("div.overlay > div").off("click.tileactions");
-    $("div.overlay > div").on("click.tileactions", function() {
+    $("div.overlay > div").on("click.tileactions", function(event) {
         
         var aid = $(this).attr("aid");
         var theclass = $(this).attr("class");
@@ -1556,18 +1607,21 @@ function setupPage(trigger) {
         var thevalue;
         // for switches and locks set the command to toggle
         // for most things the behavior will be driven by the class value = swattr
-        if (subid==="switch" || subid==="lock" || thetype==="door" ) {
+        if (subid==="switch" || subid==="lock" || (thetype==="door" && subid==="door") ) {
             thevalue = "toggle";
         // handle shm special case
-        } else if ( thetype=="shm") {
+        } else if ( (thetype=="shm" || thetype=="custom") && subid=="state" )  {
             thevalue = $(targetid).html();
             if ( thevalue=="off" ) { thevalue = "stay"; }
             else if ( thevalue=="stay") { thevalue = "away"; }
             else { thevalue = "off"; }
-        } else if ( thetype=="custom") {
+        } else if ( thetype=="custom" && subid=="post") {
             thevalue = "";
         } else {
             thevalue = $(targetid).html();
+            if ( !thevalue && thetype=="thermostat") {
+                thevalue = $("#a-"+aid+"-temperature").html();
+            }
         }
 
         // turn momentary items on or off temporarily
@@ -1580,8 +1634,9 @@ function setupPage(trigger) {
                 this[0].attr("class", this[1]);
                 this[0].html(this[2]);
             };
+            
             $.post(returnURL, 
-                {useajax: ajaxcall, id: bid, type: thetype, value: thevalue, attr: subid, hubnum: hubnum},
+                {useajax: ajaxcall, id: bid, type: thetype, value: thevalue, attr: subid, subid: subid, hubnum: hubnum},
                 function(presult, pstatus) {
                     if (pstatus==="success" && presult!==undefined && presult!==false) {
                         console.log( ajaxcall + " POST returned: "+ strObject(presult) );
@@ -1611,6 +1666,7 @@ function setupPage(trigger) {
         } else if ( thetype==="weather") {
             console.log("Weather tiles have no actions...");
         } else {
+            // alert("ajax= "+ajaxcall+" id= "+bid+" value= "+thevalue+" attr= "+subid+" subid= "+subid+" class="+theclass);
             console.log(ajaxcall + ": id= "+bid+" hub= " + hubnum + " type= "+thetype+ " subid= " + subid + " value= "+thevalue+" class="+theclass);
             $.post(returnURL, 
                    {useajax: ajaxcall, id: bid, type: thetype, value: thevalue, attr: theclass, subid: subid, hubnum: hubnum},
@@ -1621,7 +1677,7 @@ function setupPage(trigger) {
                                 var keys = Object.keys(presult);
                                 if ( keys && keys.length) {
                                     console.log( ajaxcall + " POST returned: "+ strObject(presult) );
-                                    updAll(subid,aid,bidupd,thetype,hubnum,presult);
+                                     updAll(subid,aid,bidupd,thetype,hubnum,presult);
                                 } else {
                                     console.log( ajaxcall + " POST returned nothing to update (" + presult+"}");
                                 }
@@ -1631,7 +1687,8 @@ function setupPage(trigger) {
             );
             
         } 
-                            
+         
+        event.stopPropagation();
     });
    
 };
