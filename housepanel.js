@@ -12,6 +12,8 @@ var pagename = "main";
 // use the timers options to turn off polling
 var disablepub = false;
 var disabletimers = false;
+var st_timer = 30000;
+var he_timer = 10000;
 
 Number.prototype.pad = function(size) {
     var s = String(this);
@@ -117,11 +119,15 @@ $(document).ready(function() {
             var hubstr = $("input[name='allHubs']").val();
             try {
                 var hubs = JSON.parse(hubstr);
-                timerSetup(hubs);
+                setupTimer(hubs);
             } catch(e) {
                 console.log ("Couldn't find any hubs");
                 console.log ("hub raw str = " + hubstr);
             }
+            
+            // every 5 seconds update fast tiles
+            // this is experimental code for now and is disabled
+            // setupFastTimer(5000);
         }
 
         cancelDraggable();
@@ -218,7 +224,7 @@ function createModal(modalcontent, modaltag, addok,  pos, responsefunction, load
     modalcontent = modalcontent + "</div>";
     
     // console.log("modalcontent = " + modalcontent);
-    modalhook.prepend(modalcontent);
+    modalhook.append(modalcontent);
     modalStatus = 1;
     
     // call post setup function if provided
@@ -577,7 +583,7 @@ function setupDraggable() {
                 }
                 return accepting;
             },
-            tolerance: "fit",
+            tolerance: "intersect",
             drop: function(event, ui) {
                 var thing = ui.draggable;
                 var bid = $(thing).attr("bid");
@@ -1378,16 +1384,16 @@ function setupTabclick() {
     });
 }
 
-function timerSetup(hubs) {
+function setupTimer(hubs) {
 
     // loop through every hub
     $.each(hubs, function (hubnum, hub) {
 
         var hubType = hub.hubType;
         var token = hub.hubAccess;
-        var timerval = 60000;
+        var timerval = st_timer;
         if ( hubType==="Hubitat" ) {
-            timerval = 10000;
+            timerval = he_timer;
         }
         // console.log("hub #" + hubnum + " timer = " + timerval + " hub = " + strObject(hub));
 
@@ -1455,11 +1461,82 @@ function timerSetup(hubs) {
             setTimeout(function() {updarray.myMethod();}, this[1]);
         };
 
-        // wait before doing first one
-        setTimeout(function() {updarray.myMethod();}, timerval);
+        // wait before doing first one - or skip this hub if requested
+        if ( timerval && timerval >= 1000 ) {
+            setTimeout(function() {updarray.myMethod();}, timerval);
+        }
         
     });
     
+}
+
+// this is similar to the above function but operates only on tiles that
+// can be refreshed very frequently without a call back to a hub
+// this updates image and custom tiles every 5 seconds with whatever content is on server
+function setupFastTimer(timerval) {
+
+    var updarray = ["fast", timerval];
+    updarray.fastMethod = function() {
+
+        var that = this;
+        var err;
+
+        // skip if not in operation mode or if inside a modal dialog box
+        if ( priorOpmode !== "Operate" || modalStatus ) { 
+            // console.log ("Timer Hub #" + that[2] + " skipped: opmode= " + priorOpmode + " modalStatus= " + modalStatus+" token= " + token);
+            // repeat the method above indefinitely
+            setTimeout(function() {updarray.fastMethod();}, this[1]);
+            return; 
+        }
+
+        try {
+            $.post(returnURL, 
+                {useajax: "doquery", id: that[0], type: that[0], value: "none", attr: "none", hubnum: -1},
+                function (presult, pstatus) {
+                    if (pstatus==="success" && presult!==undefined ) {
+
+                        // console.log("Success polling fast. Returned: " + Object.keys(presult).length+ " items");
+                            
+                        // go through all tiles and update
+                        try {
+                        $('div.panel div.thing').each(function() {
+                            var aid = $(this).attr("id");
+                            if ( aid.startsWith("t-") ) {
+                                aid = aid.substring(2);
+                                var tileid = $(this).attr("tile");
+                                tileid = parseInt(tileid, 10);
+                                
+                                if ( presult[tileid] !== undefined ) {
+
+                                    var thevalue;
+                                    try {
+                                        thevalue = presult[tileid];
+                                    } catch (err) { }
+                                    
+                                    // handle both direct values and bundled values
+                                    if ( thevalue && thevalue.hasOwnProperty("value") ) {
+                                        thevalue = thevalue.value;
+                                    }
+                                    
+                                    if ( thevalue && thevalue!==undefined ) { updateTile(aid,thevalue); }
+                                }
+                            }
+                        });
+                        } catch (err) { console.error("Polling error", err.message); }
+                    }
+                }, "json"
+            );
+        } catch(err) {
+            console.error ("Polling error", err.message);
+        }
+
+        // repeat the method above indefinitely
+        setTimeout(function() {updarray.fastMethod();}, this[1]);
+    };
+
+    // wait before doing first one
+    setTimeout(function() {updarray.fastMethod();}, timerval);
+
 }
 
 function updateMode() {
@@ -1596,7 +1673,14 @@ function setupPage(trigger) {
         var bidupd = bid;
         var thetype = $(tile).attr("type");
         var hubnum = $(tile).attr("hub");
-        var targetid = '#a-'+aid+'-'+subid;
+        var targetid;
+        if ( subid.endsWith("-up") || subid.endsWith("-dn") ) {  // heat-dn
+            var slen = subid.length;
+            targetid = '#a-'+aid+'-'+subid.substring(0,slen-3);
+            // console.log("slen = ",slen," target= ", targetid);
+        } else {
+            targetid = '#a-'+aid+'-'+subid;
+        }
         
         // set the action differently for Hubitat
         var ajaxcall = "doaction";

@@ -7,6 +7,12 @@
  * HousePanel now obtains all auth information from the setup step upon first run
  *
  * Revision History
+ * 1.930      Fix thermostat and video tag obscure bugs and more
+ *            - chnage video to inherit size
+ *            - change tile editor to append instead of prepend to avoid overlaps
+ *            - increase default polling speed
+ *            - first release of install script install.sh
+ * 1.928      Disallow hidden whole tiles and code cleanup
  * 1.927      Added flourescent graphic to default skin, fix edit of active tile
  * 1.926      Doc update to describe video tiles and minor tweaks, added help button
  * 1.925      Various patches and hub tweaks
@@ -140,7 +146,7 @@
 */
 ini_set('max_execution_time', 300);
 ini_set('max_input_vars', 20);
-define('HPVERSION', 'Version 1.927');
+define('HPVERSION', 'Version 1.930');
 define('APPNAME', 'HousePanel ' . HPVERSION);
 define('CRYPTSALT','HousePanel%by@Ken#Washington');
 
@@ -244,7 +250,7 @@ function hidden($pname, $pvalue, $id = false) {
     return $inpstr;
 }
 
-function putdiv($value, $class="error") {
+function putdiv($value, $class) {
     $tc = "<div class=\"" . $class . "\">" . $value . "</div>";
     return $tc;
 }
@@ -293,7 +299,7 @@ function curl_call($host, $headertype=FALSE, $nvpstr=FALSE, $calltype="GET")
 }
 
 // return all devices in one call
-// TODO: Implement logic to read Wink and Vera hub allthings
+// TODO: Implement logic to read Wink, OpenHab, and Vera hubs
 function getDevices($allthings, $hubnum, $hubType, $hubAccess, $hubEndpt, $clientId, $clientSecret) {
 
     // we now always get all things at once
@@ -902,6 +908,8 @@ function getAllThings($reset = false) {
 
     $options = readOptions();
     $configoptions = $options["config"];
+    $tz = $configoptions["timezone"];
+    date_default_timezone_set($tz);
     
     if ( !$reset && isset($_SESSION["allthings"]) ) {
         $allthings = $_SESSION["allthings"];
@@ -921,7 +929,7 @@ function getAllThings($reset = false) {
         $dateofmonth = date("M d, Y");
         $timeofday = date("g:i a");
         $timezone = date("T");
-        $dclock = array("name" => $clockname, "weekday" => $weekday, "date" => $dateofmonth, "time" => $timeofday, "tzone" => $timezone, "skin" => "");
+        $dclock = array("name" => $clockname, "skin" => "", "weekday" => $weekday, "date" => $dateofmonth, "time" => $timeofday, "tzone" => $timezone);
         $allthings["clock|clockdigital"] = array("id" => "clockdigital", "name" => $clockname, 
             "hubnum" => $hubnum, "hubtype" => $hubType, "type" => "clock", "value" => $dclock);
 
@@ -929,7 +937,7 @@ function getAllThings($reset = false) {
         $clockname = "Analog Clock";
         // $clockskin = "CoolClock:classic";
         $clockskin = "CoolClock:swissRail:72";
-        $aclock = array("name" => $clockname, "weekday" => $weekday, "date" => $dateofmonth, "time" => $timeofday, "tzone" => $timezone, "skin" => $clockskin);
+        $aclock = array("name" => $clockname, "skin" => $clockskin, "weekday" => $weekday, "date" => $dateofmonth, "time" => $timeofday, "tzone" => $timezone);
         $allthings["clock|clockanalog"] = array("id" => "clockanalog", "name" => $clockname, 
              "hubnum" => $hubnum, "hubtype" => $hubType, "type" => "clock", "value" => $aclock);
 
@@ -967,7 +975,7 @@ function getAllThings($reset = false) {
             }
         }
 
-        // add 8 custom ad-hoc tiles
+        // add custom ad-hoc tiles
         // custom tiles can only reference things in the first hub
         for ($i=1; $i<= $customcnt; $i++ ) {
             $customid = "custom_" . strval($i);
@@ -1019,23 +1027,8 @@ function getCustomTile($tilename, $lines, $options, $allthings) {
         
         // process web calls made in custom tiles
         if ( $posturl && ($calltype==="GET" || $calltype==="POST" || $calltype==="PUT") &&
-            substr(strtolower($posturl),0,4)==="http" ) {
-            
-//            $webresponse = curl_call($posturl, FALSE, "", $calltype);
-//            if (is_array($webresponse)) {
-//                $custom_val[$subid] = "";
-//                foreach($webresponse as $key => $val) {
-//                    $custom_val[$subid] .= "<p>" . $key . ": ";
-//                    if ( is_array($val) ) {
-//                        $custom_val[$subid].= "<pre>" . print_r($val,true) . "</pre>";
-//                    } else {
-//                        $custom_val[$subid].= $val;
-//                    }
-//                    $custom_val[$subid].= "</p>";
-//                }
-//            } else {
-//                $custom_val[$subid] = $webresponse;
-//            }
+             substr(strtolower($posturl),0,4)==="http" ) 
+        {
             $custom_val[$subid] = $calltype . ": " . $posturl;
             $custom_val["results"] = "";
 
@@ -1087,7 +1080,7 @@ function processName($thingname, $thingtype) {
 // this function reflects whatever you put in the maketile routine
 // it must be an existing video file of type mp4
 function returnVideo($vidname) {
-    $v= "<video width=\"240px\" height=\"147px\" autoplay><source src=$vidname type=\"video/mp4\"></video>";
+    $v= "<video width=\"inherit\" height=\"inherit\" autoplay><source src=$vidname type=\"video/mp4\"></video>";
     return $v;
 }
 
@@ -1207,14 +1200,14 @@ function makeThing($i, $kindex, $thesensor, $panelname, $postop=0, $posleft=0, $
 
         $tkey = "name";
         $tc.= "<div class=\"overlay $tkey v_$kindex\">";
-        $tc.= "<div aid=\"$i\" type=\"$thingtype\"  subid=\"$tkey\" title=\"$tkey\" class=\"video $tkey\" id=\"a-$i"."-$tkey\">";
+        $tc.= "<div aid=\"$i\" type=\"$thingtype\"  subid=\"$tkey\" title=\"$tkey\" class=\"video $tkey p_$kindex\" id=\"a-$i"."-$tkey\">";
         $tc.= $thingpr;
         $tc.= "</div>";
         $tc.= "</div>";
         
         $tkey = "url";
         $tc.= "<div class=\"overlay $tkey v_$kindex\">";
-        $tc.= "<div aid=\"$i\" type=\"$thingtype\"  subid=\"$tkey\" title=\"$vidname\" class=\"video $tkey\" id=\"a-$i"."-$tkey\">";
+        $tc.= "<div aid=\"$i\" type=\"$thingtype\"  subid=\"$tkey\" title=\"$vidname\" class=\"video $tkey p_$kindex\" id=\"a-$i"."-$tkey\">";
         $tc.= returnVideo($vidname);
         $tc.= "</div>";
         $tc.= "</div>";
@@ -1292,7 +1285,7 @@ function putElement($kindex, $i, $j, $thingtype, $tval, $tkey="value", $subtype=
     $tc = "";
     // add a name specific tag to the wrapper class
     // and include support for hue bulbs - fix a few bugs too
-    if ( in_array($tkey, array("heat", "cool", "vol", "hue", "saturation") )) {
+    if ( in_array($tkey, array("heat", "cool", "hue", "saturation") )) {
 //    if ($tkey=="heat" || $tkey=="cool" || $tkey=="level" || $tkey=="vol" ||
 //        $tkey=="hue" || $tkey=="saturation" || $tkey=="colorTemperature") {
         $tkeyval = $tkey . "-val";
@@ -1301,10 +1294,13 @@ function putElement($kindex, $i, $j, $thingtype, $tval, $tkey="value", $subtype=
         } else {
             $colorval = "";
         }
+        
+        // fix thermostats to have proper consistent tags
+        // this is supported by changes in the .js file and .css file
         $tc.= "<div class=\"overlay $tkey" . $subtype . " v_$kindex\">";
-        $tc.= "<div aid=\"$i\" subid=\"$tkey\" title=\"$thingtype down\" class=\"$thingtype $tkey-dn p_$kindex\"></div>";
-        $tc.= "<div aid=\"$i\" subid=\"$tkey\" title=\"$thingtype $tkey\" class=\"$thingtype $tkeyval p_$kindex\"$colorval id=\"a-$i"."-$tkey\">" . $tval . "</div>";
-        $tc.= "<div aid=\"$i\" subid=\"$tkey\" title=\"$thingtype up\" class=\"$thingtype $tkey-up p_$kindex\"></div>";
+        $tc.= "<div aid=\"$i\" subid=\"$tkey-dn\" title=\"$thingtype down\" class=\"$thingtype $tkey-dn p_$kindex\"></div>";
+        $tc.= "<div aid=\"$i\" subid=\"$tkey\" title=\"$thingtype $tkey\" class=\"$thingtype $tkey p_$kindex\"$colorval id=\"a-$i"."-$tkey\">" . $tval . "</div>";
+        $tc.= "<div aid=\"$i\" subid=\"$tkey-up\" title=\"$thingtype up\" class=\"$thingtype $tkey-up p_$kindex\"></div>";
         $tc.= "</div>";
     
     // process analog clocks signalled by use of a skin with a valid name other than digital
@@ -1372,7 +1368,6 @@ function putElement($kindex, $i, $j, $thingtype, $tval, $tkey="value", $subtype=
 function getNewPage(&$cnt, $allthings, $roomtitle, $kroom, $things, $indexoptions, $kioskmode) {
     $tc = "";
     $roomname = $roomtitle;
-//    $roomname = strtolower($roomname);
     $tc.= "<div id=\"$roomname" . "-tab\">";
     if ( $allthings ) {
         if ( DEBUG || DEBUG3) {
@@ -1526,7 +1521,7 @@ function doAction($endpt, $path, $access_token, $swid, $swtype,
         
     $host = $endpt . "/" . $path;
     
-    if ( $swtype==="clock" || $swtype==="all") {
+    if ( $swtype==="clock" || $swtype==="all" || $swtype==="fast") {
         $dclockname = "Digital Clock";
         $weekday = date("l");
         $dateofmonth = date("M d, Y");
@@ -1661,7 +1656,39 @@ function doAction($endpt, $path, $access_token, $swid, $swtype,
             }
             $_SESSION["allthings"] = $allthings;
         }
+
+    // if the new fast type is requested return things that can be updated
+    // without making a call out to the hub
+    // this can be used to create stop-time videos in image tiles updated frequently
+    // all things must be in session for this to work
+    } else if ( $swtype==="fast" && isset($_SESSION["allthings"]) ) {
         
+        $respvals = array();
+        $thingoptions = $options["things"];
+        $indexoptions = $options["index"];
+        $allthings = $_SESSION["allthings"];
+        
+        // go through all the tiles in all the rooms
+        // and return those that don't require hub reading
+        // for now this just does image and blank tiles
+        foreach ($thingoptions as $room => $thingarray) {
+            foreach ($thingarray as $idxarray) {
+                $tileid = $idxarray[0];
+                $thingid = array_search($tileid, $indexoptions);
+                if ($thingid && array_key_exists($thingid, $allthings)) {
+                    $thing = $allthings[$thingid];
+                    $type = $thing["type"];
+
+                    // return existing content of tiles updated external to the hub
+                    if ( $type==="image" || $type==="blank" ) {
+                        $respvals[$tileid] = $thing;
+                    }
+                }
+            }
+        }
+        $response = $respvals;
+        
+    // the final default is for "all" and other types when queried or action taken
     } else {
             
         $headertype = array("Authorization: Bearer " . $access_token);
@@ -1771,7 +1798,7 @@ function doAction($endpt, $path, $access_token, $swid, $swtype,
                 $response = $respvals;
             } else {
                 $idx = $swtype . "|" . $swid;
-                if ( isset($allthings[$idx]) && $swid!=="clockanalog" && $swtype==$allthings[$idx]["type"] ) {
+                if ( isset($allthings[$idx]) && $swtype!=="clock" && $swtype==$allthings[$idx]["type"] ) {
                     $newval = array_merge($allthings[$idx]["value"], $response);
                     $allthings[$idx]["value"] = $newval;
                 }
@@ -1840,10 +1867,6 @@ function setOrder($endpt, $access_token, $swid, $swtype, $swval, $swattr) {
 function setPosition($endpt, $access_token, $swid, $swtype, $swval, $swattr) {
     $updated = false;
     $options = readOptions();
-    
-//    $pgresult = array();
-//    $pgresult["type"] = $swtype;
-//    $idx = $swtype . "|" . $swid;
     $panel = $swval["panel"];
     $tile = intval($swval["tile"],10);
     $zindex = intval($swval["zindex"],10);
@@ -1916,7 +1939,6 @@ function cleanupStr($str) {
 // we actually write two copies - one saved in the skin for skin swapping
 function writeCustomCss($fname, $str, $skin="") {
     $today = date("F j, Y  g:i a");
-    // $file = fopen($fname,"wb");
     $fixstr = "/* HousePanel Generated Tile Customization File */\n";
     $fixstr.= "/* Created: $today  */\n";
     $fixstr.= "/* ********************************************* */\n";
@@ -1929,9 +1951,7 @@ function writeCustomCss($fname, $str, $skin="") {
         // fix addition of backslashes before quotes on some servers
         $str3 = str_replace("\\\"","\"",$str);
         $fixstr.= $str3;
-        // fwrite($file, $str3);
     }
-    // fclose($file);
 
     // write the file
     file_put_contents($fname, $fixstr);
@@ -1943,19 +1963,31 @@ function writeCustomCss($fname, $str, $skin="") {
 }
 
 // read in customtiles ignoring the comments
+// updated this to properly treat /*   */ comment blocks
 function readCustomCss() {
     $file = fopen("customtiles.css","rb");
     $contents = "";
 
     if ( $file ) {
+        $incomment = false;
         while (!feof($file)) {
-            $line = fgets($file, 8192);
-            if ( substr($line, 0, 2)!=="/*" && substr($line, 0, 2)!=="//" ) {
-                $line = trim($line);
-                if ( $line ) {
-                    $contents.= $line . "\n";
+            $line = trim(fgets($file, 1024));
+            
+            if ( substr($line, 0, 2) === "/*" ) {
+                $incomment = true;
+            }
+                
+            if ( $line && !$incomment && substr($line, 0, 2)!=="//" ) {
+                $contents.= $line;
+                if ( substr($line, -1)!=="\n" ) {
+                    $contents.= "\n";
                 }
             }
+            
+            if ( substr($line, -2) === "*/" ) {
+                $incomment = false;
+            }
+            
         }
     }
     return $contents;
@@ -1981,11 +2013,7 @@ function refactorOptions($allthings) {
     $options["useroptions"] = $thingtypes;
     $options["things"] = array();
     $options["index"] = array();
-//    $options["rooms"] = $oldoptions["rooms"];
-//    $options["things"] = $oldoptions["things"];
-//    $options["skin"] = $oldoptions["skin"];
-//    $options["kiosk"] = $oldoptions["kiosk"];
-//    $options["config"] = $oldoptions["config"];
+
 
     foreach ($oldoptions["index"] as $thingid => $idxarr) {
         $cnt++;
@@ -2104,12 +2132,12 @@ function setDefaults($options, $allthings) {
 
     // generic room setup
     $defaultrooms = array(
-        "Kitchen" => "clock|weather|kitchen|sink|pantry|dinette" ,
+        "Kitchen" => "clock|kitchen|sink|pantry|dinette" ,
         "Family" => "clock|family|mud|fireplace|casual|thermostat",
         "Living" => "clock|living|dining|entry|front door|foyer",
         "Office" => "clock|office|computer|desk|work",
         "Bedrooms" => "clock|bedroom|kid|kids|bathroom|closet|master|guest",
-        "Outside" => "clock|garage|yard|outside|porch|patio|driveway",
+        "Outside" => "clock|garage|yard|outside|porch|patio|driveway|weather",
         "Music" => "clock|sonos|music|tv|television|alexa|echo|stereo|bose|samsung|pioneer"
     );
     
@@ -2158,7 +2186,7 @@ function mysortfunc($cmpa, $cmpb) {
     $namea = $cmpa["name"];
     $typea = $cmpa["type"];
     $nameb = $cmpb["name"];
-     $typeb = $cmpb["type"];
+    $typeb = $cmpb["type"];
     $k1 = array_search($typea, $thingtypes);
     $k2 = array_search($typeb, $thingtypes);
     
@@ -2251,7 +2279,6 @@ function getOptionsPage($options, $retpage, $allthings, $sitename) {
         // $roomname = array_search($k, $roomoptions);
         if ( $roomname ) {
             $tc.= "<th class=\"roomname\">$roomname";
-            // $tc.= hidden("o_" . $roomname, $k);
             $tc.= "</th>";
         }
     }
@@ -2302,7 +2329,6 @@ function getOptionsPage($options, $retpage, $allthings, $sitename) {
         
         $tc.= "<td class=\"thingname\">";
         $tc.= $thingname . "<span class=\"typeopt\"> (" . $thetype . ")</span>";
-        // $tc.= hidden("i_" .  $thingid, $thingindex);
         $tc.= "</td>";
         
         $tc.="<td>$hubStr</td>";
@@ -2515,8 +2541,6 @@ function processOptions($optarray) {
     
     // make an empty options array for saving
     $options = $oldoptions;
-    // $options["rooms"] = array();
-    // $options["index"] = array();
     $options["things"] = array();
     $options["useroptions"] = $thingtypes;
     $roomnames = array_keys($options["rooms"]);
@@ -2611,7 +2635,6 @@ function processOptions($optarray) {
                         $postop = 0;
                         $posleft = 0;
                     }
-                    // if ( array_search($tilenum, $val)!== FALSE ) {
                     if ( inroom($tilenum, $val) ) {
                         $options["things"][$roomname][] = array($tilenum,$postop,$posleft,$zindex,$customname);
                         $lasttop = $postop;
@@ -2624,7 +2647,6 @@ function processOptions($optarray) {
             // add any new ones that were not there before
             $newthings = $options["things"][$roomname];
             foreach ($val as $tilestr) {
-//                if ( array_search($tilenum, $newthings)=== FALSE ) {
                 $tilenum = intval($tilestr,10);
                 if ( ! inroom($tilenum, $newthings) ) {
                         $options["things"][$roomname][] = array($tilenum,$lasttop,$lastleft, $lastz, "");
@@ -2635,16 +2657,6 @@ function processOptions($optarray) {
             if ( count($options["things"][$roomname]) == 0  ) {
                 $options["things"][$roomname][] = array($onlytile,0,0,1,"");
             }
-            
-// these blocks aren't used any more since we don't edit rooms and things in Options
-        // keys starting with o_ are room names with order as value
-//        } else if ( substr($key,0,2)=="o_") {
-//            $roomname = substr($key,2);
-//            $options["rooms"][$roomname] = intval($val,10);
-//        // keys starting with i_ are thing type|id pairs with order as value
-//        } else if ( substr($key,0,2)=="i_") {
-//            $thingid = substr($key,2);
-//            $options["index"][$thingid] = intval($val,10);
         }
     }
         
@@ -2983,15 +2995,6 @@ function is_ssl() {
         unset( $options["timezone"] );
         unset( $options["skin"] );
         unset( $options["kiosk"] );
-        
-//        echo "hubnum = $hubnum <br><pre>";
-//        print_r($hub);
-//        echo "</pre>";
-//        echo "<br>userAccess = $userAccess userEndpt = $userEndpt <br>";
-//        echo "<pre>";
-//        print_r($options);
-//        echo "</pre>";
-//        exit(0);
         
         // save options for now
         writeOptions($options);
