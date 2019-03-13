@@ -1,0 +1,5 @@
+housepanel-push.js is a Node.js app used with HousePanel to enable direct state pushes
+to give users near immediate feedback about state changes made in their smart home
+on the HousePanel dashboard. This is used together with polling to keep your dashboard
+in sync with the status of your home.
+

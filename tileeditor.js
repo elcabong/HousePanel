@@ -7,6 +7,7 @@
  * (c) Ken Washington 2017, 2018
  * 
  */
+var et_Globals = {};
 var savedSheet;
 var priorIcon = "none";
 var defaultShow = "block";
@@ -31,11 +32,11 @@ $.fn.isAuto = function(dimension){
         }
     } else if (dimension == 'height'){
         var originalHeight = this.height();
-        this.append('<div id="testzzz"></div>');
-        var testHeight = originalHeight+500;
-        $('#testzzz').css({height: testHeight});
+        // this.append('<div id="testzzz"></div>');
+        // var testHeight = originalHeight+500;
+        // $('#testzzz').css({height: testHeight});
         var newHeight = this.height();
-        $('#testzzz').remove();
+        // $('#testzzz').remove();
         if( newHeight > originalHeight ) {
             return true;    
         } else{
@@ -49,54 +50,39 @@ $.fn.isAuto = function(dimension){
 function getOnOff(str_type, subid) {
     var onoff = ["",""];
     
-    switch (subid) {
-        case "switch" :
-        case "switchlevel":
-        case "bulb":
-        case "light":
-        case "momentary":
-            onoff = ["on","off"];
-            break;
-        case "contact":
-        case "door":
-        case "valve":
-            onoff = ["open","closed"];
-            break;
-        case "motion":
-            onoff = ["active","inactive"];
-            break;
-        case "lock":
-            onoff = ["locked","unlocked"];
-            break;
-        case "pistonName":
-            onoff = ["firing","idle"];
-            break;
-        case "thermofan":
-            onoff = ["auto","on"];
-            break;
-        case "thermomode":
-            onoff = ["heat","cool","auto","off"];
-            break;
-        case "thermostate":
-            onoff = ["idle","heating","cooling","off"];
-            break;
-        case "musicstatus":
-            onoff = ["stopped","paused","playing"];
-            break;
-        case "musicmute":
-            onoff = ["muted","unmuted"];
-            break;
-        case "presence":
-            onoff = ["present","absent"];
-            break;
-        case "state":
-            if ( str_type==="shm" ) {
-                onoff = ["off","stay","away"];
-            } else if ( str_type==="hsm" ) {
-                onoff = ["armedAway","armedHome","armedNight","disarmed","allDisarmed"];
-            }
-            break;
-            
+    // handle the cases for custom tiles that could have any subid starting with valid names
+    if ( subid.startsWith("switch" ) ) {
+        onoff = ["on","off"];
+    } else if ( (str_type==="momentary") && subid.startsWith("momentary" ) ) {
+        onoff = ["on","off"];
+    } else if ( subid.startsWith("contact" ) || subid.startsWith("door" ) || subid.startsWith("valve" ) ) {
+        onoff = ["open","closed"];
+    } else if ( subid.startsWith("lock" ) ) {
+        onoff = ["locked","unlocked"];
+    } else if ( subid.startsWith("motion") ) {
+        onoff = ["active","inactive"];
+    } else if ( subid.startsWith("pistonName" ) ) {
+        onoff = ["firing","idle"];
+    } else if ( subid.startsWith("thermofan" ) ) {
+        onoff = ["auto","on"];
+    } else if ( subid.startsWith("thermomode" ) ) {
+        onoff = ["active","inactive"];
+    } else if ( subid.startsWith("thermostate" ) ) {
+        onoff = ["active","inactive"];
+    } else if ( subid.startsWith("thermomode" ) ) {
+        onoff = ["heat","cool","auto","off"];
+    } else if ( subid.startsWith("thermostate" ) ) {
+        onoff = ["idle","heating","cooling","off"];
+    } else if ( subid.startsWith("musicstatus" ) ) {
+        onoff = ["stopped","paused","playing"];
+    } else if ( subid.startsWith("musicmute" ) ) {
+        onoff = ["muted","unmuted"];
+    } else if ( subid.startsWith("presence" ) ) {
+        onoff = ["present","absent"];
+    } else if ( str_type==="shm" && subid.startsWith("state" ) ) {
+        onoff = ["off","stay","away"];
+    } else if ( str_type==="hsm" && subid.startsWith("state" ) ) {
+        onoff = ["armedAway","armedHome","armedNight","disarmed","allDisarmed"];
     }
     
     return onoff;
@@ -188,34 +174,41 @@ function getCssRuleTarget(str_type, subid, thingindex, useall) {
         // target += " div.overlay";
         if ( subid.startsWith("music-") ) {
             target += " div.overlay.music-controls";
-            if ( useall === 0 ) { target+= '.v_'+thingindex; }
 //        } else if ( subid==="forecastIcon" || subid==="weatherIcon" )  {
 //            target += " div.weather_icons";
 //        } else if ( subid==="feelsLike" || (str_type==="weather" && subid==="temperature") )  {
 //            target += " div.weather_temps";
+        } else if ( subid.endsWith("-dn") || subid.endsWith("-up") ) {
+            target += " div.overlay." + subid.substring(0,subid.length-3);
         } else {
             target += " div.overlay." + subid;
-            if ( useall === 0 ) { target+= '.v_'+thingindex; }
         }
+        if ( useall === 0 ) { target+= '.v_'+thingindex; }
 
         // for everything other than levels, set the subid target
         // levels use the overlay layer only
         // set the subid which is blank if it matches the tile type
-        var subidtag = "." + subid;
-        if ( subid===str_type ) {
-            subidtag = "";
-        }
+        // edit... changed to only use the subid since that is all we need
+        //         this enables custom tile editing to work properly
+        //         since the str_type can be any linked item for those
+//        var subidtag = "." + subid;
+//        if ( subid===str_type ) {
+//            subidtag = "";
+//        }
         if ( subid!=="level" && subid!=="head" ) {
+        // if ( subid!=="head" ) {
             // target+= " div."+str_type;
 
             // handle special thermostat wrapper case
             if ( useall===2 ){
                 target+= " div";
-            } else if ( subid === "cool" || subid==="heat" ) { 
-                target+= " div." + subid + "-val"; 
+            // } else if ( subid === "cool" || subid==="heat" ) { 
+            //    target+= " div." + subid + "-val"; 
             } else {
-                target+= " div."+str_type + subidtag;
+                // target+= " div."+str_type + subidtag;
+                target+= " div." + subid;
             }
+            
             if ( useall === 0 ) target+= '.p_'+thingindex;
         }
 
@@ -227,8 +220,8 @@ function getCssRuleTarget(str_type, subid, thingindex, useall) {
              subid==="cool" || subid==="heat" || subid==="stream" ) {
             on = "";
         } else {
-            var onofftarget = "div.overlay." + subid + '.v_' + thingindex + " div."+str_type + subidtag + '.p_'+thingindex;
-            var on = $(onofftarget).html();
+            // var onofftarget = "div.overlay." + subid + '.v_' + thingindex + " div."+str_type + subidtag + '.p_'+thingindex;
+            var on = $("#onoffTarget").html();
             if ( on && !$.isNumeric(on) && (on.indexOf(" ") === -1) ) {
                 on = "."+on;
             } else {
@@ -243,10 +236,17 @@ function getCssRuleTarget(str_type, subid, thingindex, useall) {
     return target;
 }
 
-function toggleTile(target, str_type, thingindex) {
+// function toggleTile(target, str_type, thingindex) {
+// function toggleTile(str_type, subid, thingindex) {
+function toggleTile(target, str_type, subid, thingindex) {
+    // alert(subid);
+    // var target = "#tileDialog " + getCssRuleTarget(str_type, subid, thingindex);
+    // var target = "#tileDisplay " + getCssRuleTarget(str_type, subid, thingindex);
     var swval = $(target).html();
-    var subid = $(target).attr("subid");
-    // alert("tile type= "+str_type+" subid= "+subid);
+    // var currentclass = $(target).attr("class");
+    // var subid = $(target).attr("subid");
+    console.log("toggleTile: target= " + target + " tile type= "+str_type+" subid= "+subid + " swval= "+swval);
+    $('#onoffTarget').html("");
     
     // activate the icon click to use this
     var onoff = getOnOff(str_type, subid);
@@ -256,21 +256,23 @@ function toggleTile(target, str_type, thingindex) {
             var oldsub = onoff[i];
             if ( $(target).hasClass(oldsub) ) { 
                 $(target).removeClass(oldsub); 
-                console.log("Removing attribute (" + oldsub + ") from wysiwyg display for tile: " + str_type);
+                console.log("Removing attribute (" + oldsub + ") from wysiwyg display for tile: " + str_type + " swval = " + swval);
             }
             if ( oldsub === swval ) {
                 newsub = i+1;
                 if ( newsub >= onoff.length ) { newsub= 0; }
+                $(target).addClass( onoff[newsub] ); 
                 $(target).html( onoff[newsub] );
+                $('#onoffTarget').html(onoff[newsub]);
                 console.log("Adding attribute (" + onoff[newsub] + ") to wysiwyg display for tile: " + str_type);
                 break;
             }
         }
-        $(target).addClass( onoff[newsub] );
+        // $(target).addClass( onoff[newsub] );
+        // $('#onoffTarget').html(onoff[newsub]);
+        
+        // alert(onoff[newsub]);
     }
-    
-    // initColor(str_type, subid, thingindex);
-    // loadSubSelect(str_type, subid, thingindex);
 };
 
 // activate ability to click on icons
@@ -284,7 +286,7 @@ function setupIcons(category, old_str_type, old_thingindex) {
         var img = $(this).attr("src");
         var subid = $("#subidTarget").html();
         var strIconTarget = getCssRuleTarget(str_type, subid, thingindex);
-        console.log("Clicked on img= "+img+" Category= "+category+" icontarget= "+strIconTarget+" type= "+str_type+" subid= "+subid+" index= "+thingindex);
+        console.log("Clicked on img= "+img+" Category= "+category+" strIconTarget= "+strIconTarget+" type= "+str_type+" subid= "+subid+" index= "+thingindex);
         iconSelected(category, strIconTarget, img, str_type, subid, thingindex);
     });
 }
@@ -315,14 +317,24 @@ function initDialogBinds(str_type, thingindex) {
 
         var newname = $("#editName").val();
         $(target1).html(newname);
-        // addCSSRule(target2, "content: " + newname + ";" );
-        // event.stopPropagation;
+        cm_Globals.reload = true;
+    });
+    
+    // new button to process the name change
+    $("#editName").on('change', function () {
+        var newname = $("#editName").val();
+        $(target1).html(newname);
+        cm_Globals.reload = true;
+        saveTileEdit(str_type, thingindex, newname, "false");
+        event.stopPropagation;
     });
     
     // new button to process the name change
     $("#processName").on("click", function (event) {
         var newname = $("#editName").val();
-        saveTileEdit(str_type, thingindex, newname);
+        $(target1).html(newname);
+        cm_Globals.reload = true;
+        saveTileEdit(str_type, thingindex, newname, "false");
         event.stopPropagation;
     });
 
@@ -338,7 +350,7 @@ function initDialogBinds(str_type, thingindex) {
     $("#editName").val(newname);
     
     // set the scope dropdown list
-    var newscope = getScope(str_type, false);
+    // var newscope = getScope(str_type, false);
     // $("#scopeEffect").html(newscope);
     
     $("#bgSize").on('change', function(event) {
@@ -809,12 +821,31 @@ function colorpicker(str_type, thingindex) {
     
     // this section is loaded later with a bunch of color pickers
     // including script to respond to picked color
-    dh += "<div id='colorpicker'></div>";
+    dh += "<div id='colorpicker'>";
+    // dh += "<button id='editReset' type='button'>Reset</button>";
+    dh += "<div class='colorgroup'><label>Feature Selected:</label>";
+    var firstsub = setsubid(str_type);
+    var onoff = getOnOff(str_type, firstsub);
+    dh += "<div id='subidTarget' class='dlgtext'>" + firstsub + "</div>";
+    dh += "<div id='onoffTarget' class='dlgtext'>" + onoff[0] + "</div>";
+    dh+= "</div></div>";
+    // alert(firstsub + " " + onoff);
     return dh;
 }
 
 // popup dialog box now uses createModal
-function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {  
+function editTile(str_type, thingindex, aid, bid, thingclass, hubnum, htmlcontent) {  
+    var returnURL;
+    try {
+        returnURL = $("input[name='returnURL']").val();
+    } catch(e) {
+        returnURL = "housepanel.php";
+    }
+    
+    et_Globals.aid = aid;
+    et_Globals.id = bid;
+    et_Globals.hubnum = hubnum;
+    et_Globals.reload = false;
 
     // save the sheet upon entry for cancel handling
     savedSheet = document.getElementById('customtiles').sheet;
@@ -825,12 +856,17 @@ function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {
 	
     // header
     if ( str_type==="page" ) {
-        dialog_html += "<div id='editheader'>Editing Page#" + hubnum + 
+        dialog_html += "<div class='editheader' id='editheader'>Editing Page#" + hubnum + 
                    " of Name: " + thingindex + "</div>";
         
     } else {
-        dialog_html += "<div id='editheader'>Editing Tile #" + thingindex + 
-                   " of Type: " + str_type + " From hub #" + hubnum + "</div>";
+        if ( hubnum < 0 ) {
+            var hubstr = " Hub not applicable";
+        } else {
+            hubstr = " From hub #" + hubnum;
+        }
+        dialog_html += "<div class='editheader' id='editheader'>Editing Tile #" + thingindex + 
+                   " of Type: " + str_type + hubstr + "</div>";
     }
 
     // option on the left side - colors and options
@@ -842,7 +878,7 @@ function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {
     
     // tileEdit display on the far right side 
     dialog_html += "<div id='tileDisplay' class='tileDisplay'>";
-    dialog_html += "<div id='editInfo' class='editInfo'>Click to Select or Change State</div>";
+    dialog_html += "<div id='editInfo' class='editInfo'>Select or Change State</div>";
     
     // we either use the passed in content or make an Ajax call to get the content
     var jqxhr = null;
@@ -852,7 +888,7 @@ function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {
         // thingindex = 1000 + parseInt(roomnum,10);
         // dialog_html += "<div class=\"" + thingclass + "\" id='wysiwyg'></div>";
         // dialog_html += "<div class=\"thing " + str_type + "-thing\" id='wysiwyg'></div>";
-        jqxhr = $.post("housepanel.php", 
+        jqxhr = $.post(returnURL, 
             {useajax: "wysiwyg", id: roomnum, type: 'page', tile: thingindex, value: roomname, attr: ''},
             function (presult, pstatus) {
                 if (pstatus==="success" ) {
@@ -867,7 +903,7 @@ function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {
     } else {
         // put placeholder and populate after Ajax finishes retrieving true wysiwyg content
         // dialog_html += "<div class=\"thing " + str_type + "-thing p_"+thingindex+"\" id='wysiwyg'></div>";
-        jqxhr = $.post("housepanel.php", 
+        jqxhr = $.post(returnURL, 
             {useajax: "wysiwyg", id: '', type: '', tile: thingindex, value: '', attr: ''},
             function (presult, pstatus) {
                 if (pstatus==="success" ) {
@@ -884,15 +920,19 @@ function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {
     
     // create a function to display the tile
     var dodisplay = function() {
-        var pos = {top: 100, left: 200};
-        createModal( dialog_html, "body", true, pos, 
+        var pos = {top: 100, left: 200, zindex: 99999};
+        createModal("modalid", dialog_html, "body", true, pos, 
             // function invoked upon leaving the dialog
             function(ui, content) {
                 var clk = $(ui).attr("name");
                 // alert("clk = "+clk);
                 if ( clk==="okay" ) {
                     var newname = $("#editName").val();
-                    saveTileEdit(str_type, thingindex, newname);
+                    var fastpoll = ""
+//                    if ( $("#fastPoll").prop("checked") ) {
+//                        fastpoll = "fast";
+//                    }
+                    saveTileEdit(str_type, thingindex, newname, fastpoll);
                 } else if ( clk==="cancel" ) {
                     cancelTileEdit(str_type, thingindex);
                 }
@@ -923,22 +963,12 @@ function editTile(str_type, thingindex, thingclass, hubnum, htmlcontent) {
 
 function setupClicks(str_type, thingindex) {
     var firstsub = setsubid(str_type);
+    // toggleTile(str_type, firstsub, thingindex);
     initColor(str_type, firstsub, thingindex);
     initDialogBinds(str_type, thingindex);
     loadSubSelect(str_type, firstsub, thingindex);
     getIcons(str_type, thingindex);	
             
-    var newtitle;
-    if ( str_type==="page" ) {
-        newtitle = "Editing Page with Name: " + thingindex;
-        $("#labelName").html("Page Name:");
-    } else {
-        newtitle = "Editing Tile #" + thingindex + " of Type: " + str_type;
-        $("#labelName").html("Tile Name:");
-    }
-    newtitle+= " (editing " + tileCount + " items)";
-    $("#editheader").html(newtitle);
-    
     var trigger = "div"; // div." + str_type + ".p_"+thingindex;
     $("#wysiwyg").on('click', trigger, function(event) {
         // load up our silent tags
@@ -948,17 +978,16 @@ function setupClicks(str_type, thingindex) {
         // alert("toggling class= " + $(event.target).attr("class") + " id= " + $(event.target).attr("id") );
         // if ( $(event.target).attr("id") &&  $(event.target).attr("subid") ) {
         var subid = $(event.target).attr("subid");
-        if ( subid ) {
-            toggleTile(event.target, str_type, thingindex);
-        } else if ( $(event.target).hasClass("thingname") || $(event.target).hasClass("original")  ) {
-            subid = "head";
-            // loadSubSelect(str_type, "head", thingindex);
-        } else {
-            subid = "wholetile";
-            // loadSubSelect(str_type, "wholetile", thingindex);
+        if ( !subid || subid===undefined ) {
+            if ( $(event.target).hasClass("thingname") || $(event.target).hasClass("original")  ) {
+                subid = "head";
+            } else {
+                subid = "wholetile";
+            }
         }
         
         // update everything to reflect current tile
+        toggleTile(event.target, str_type, subid, thingindex);
         initColor(str_type, subid, thingindex);
         initDialogBinds(str_type, thingindex);
         loadSubSelect(str_type, subid, thingindex);
@@ -992,15 +1021,16 @@ function loadSubSelect(str_type, firstsub, thingindex) {
         
     // get list of all the subs this tile supports
     var subcontent = "";
-    subcontent += "<br><div class='editInfo'>Select Feature:</div>";
-    subcontent += "<select id='subidselect' name='subselect'>";
     
     if ( str_type==="page" ) {
         subcontent += "<option value='head' selected>Page Name</option>";
         subcontent += "<option value='panel'>Panel</option>";
         subcontent += "<option value='tab'>Tab Inactive</option>";
-        subcontent += "<option value='tabon'>Tab Selected</option>";
+        subcontent += "<option value='tabon'>Tab Active</option>";
     } else {
+        subcontent += "<br><div class='editInfo'><button class='cm_button' id='cm_activateCustomize'>Customize</button></div>";
+        subcontent += "<br><div class='editInfo'>Select Feature:</div>";
+        subcontent += "<select id='subidselect' name='subselect'>";
     
         if ( firstsub === "wholetile" ) {
             subcontent += "<option value='wholetile' selected>Whole Tile</option>";
@@ -1057,12 +1087,23 @@ function loadSubSelect(str_type, firstsub, thingindex) {
         var str_type = $("#tileDialog").attr("str_type");
         var thingindex = $("#tileDialog").attr("thingindex");
         var subid = $(event.target).val();
+        
+        // set the first onoff state
+        var onoff = getOnOff(str_type, subid);
+        $("#onoffTarget").html(onoff[0]);
+        
         initColor(str_type, subid, thingindex);
         initDialogBinds(str_type, thingindex);
-        // loadSubSelect(str_type, firstsub, thingindex);
         event.stopPropagation();
     });
     
+    if ( str_type !== "page" ) {
+        $("#cm_activateCustomize").off('click');
+        $("#cm_activateCustomize").on('click', function(event) {
+            customizeTile(thingindex, et_Globals.aid, et_Globals.id, str_type, et_Globals.hubnum);
+            event.stopPropagation();
+        });
+    }
 }
 
 function setsubid(str_type) {
@@ -1126,7 +1167,7 @@ function setsubid(str_type) {
     return subid;
 }
 
-function saveTileEdit(str_type, thingindex, newname) {
+function saveTileEdit(str_type, thingindex, newname, fastpoll) {
     var returnURL;
     try {
         returnURL = $("input[name='returnURL']").val();
@@ -1148,12 +1189,16 @@ function saveTileEdit(str_type, thingindex, newname) {
     var results = "";
     
     // post changes to save them in a custom css file
+    // send fastpoll in the subid
     $.post(returnURL, 
-        {useajax: "savetileedit", id: "1", type: str_type, value: sheetContents, attr: newname, tile: thingindex},
+        {useajax: "savetileedit", id: "1", type: str_type, value: sheetContents, attr: newname, tile: thingindex, subid: fastpoll},
         function (presult, pstatus) {
             if (pstatus==="success" ) {
                 results = "success: msg = " + presult;
                 console.log("POST " + results);
+                if ( cm_Globals.reload && ( modalWindows["modalcustom"] === 0 || typeof modalWindows["modalcustom"] === "undefined" ) ) {
+                    location.reload(true);
+                }
             } else {
                 results = "error: pstatus = " + pstatus + " msg = " + presult;
                 console.log("POST " + results);
@@ -1166,7 +1211,10 @@ function saveTileEdit(str_type, thingindex, newname) {
 
 function cancelTileEdit(str_type, thingindex) {
     document.getElementById('customtiles').sheet = savedSheet;
-    location.reload(true);
+    // alert( modalWindows["modalcustom"] );
+    if ( (et_Globals.reload || cm_Globals.reload) && ( modalWindows["modalcustom"] === 0 || typeof modalWindows["modalcustom"] === "undefined" ) ) {
+        location.reload(true);
+    }
 }
 
 function resetInverted(selector) {
@@ -1184,46 +1232,34 @@ function resetInverted(selector) {
 // add all the color selectors to the colorpicker div
 function initColor(str_type, subid, thingindex) {
   
-    var target;
-    var generic;
-    var newonoff;
     var onstart;
 
     // selected background color
-    target = getCssRuleTarget(str_type, subid, thingindex, 0);
-    generic = getCssRuleTarget(str_type, subid, thingindex, 1);
-    newonoff = "";
-
-    var swval;
-    var onoff;
+    var target = getCssRuleTarget(str_type, subid, thingindex, 0);
+    var generic = getCssRuleTarget(str_type, subid, thingindex, 1);
+    var icontarget = "#tileDisplay " + target;
     
-    try {
-        swval = $(target).html();
-        onoff = getOnOff(str_type, subid);
-        if ( onoff && onoff.length > 0 ) {
-            for ( var i=0; i < onoff.length; i++ ) {
-                var oldsub = onoff[i];
-                if ( swval === oldsub ) {
-                    newonoff = oldsub;
-                    break;
-                }
-            }
-        }
-    } catch (e) {
-        swval = "Unknown";
-        onoff = "";
-        newonoff = "";
+    console.log ("initcolor: str_type= " + str_type + " subid= " + subid + " thingindex= " + thingindex + " target= " + target);
+    priorIcon = $(target).css("background-image");
+        
+    // set the first onoff state
+    var onoff = getOnOff(str_type, subid);
+    
+    // set the active value
+    var onoffval = $("#onoffTarget").html();
+    if ( onoffval && !$.isNumeric(onoffval) && (onoffval.indexOf(" ") === -1) ) {
+        $(icontarget).addClass(onoffval);
+        $(icontarget).html(onoffval);
     }
     
-    var icontarget = target;
-    
-    console.log ("initcolor: str_type= " + str_type + " subid= " + subid + " thingindex= " + thingindex + " target= " + icontarget);
-    // 
-    // set the default icon to last one
-    priorIcon = $(icontarget).css("background-image");
-
+    $.each(onoff, function() {
+        if ( this && $(icontarget).hasClass(this) ) {
+            $(icontarget).removeClass(this);
+        }
+    });
+   
     // set the background size
-    var iconsize = $(icontarget).css("background-size");
+    var iconsize = $(target).css("background-size");
     // if ( str_type==="page" ) { alert("iconsize= " + iconsize); }
     
     if ( iconsize==="auto" || iconsize==="cover" ) {
@@ -1293,13 +1329,13 @@ function initColor(str_type, subid, thingindex) {
     
     // set the text height and width parameters
     if ( subid!=="wholetile" && subid!=="head" ) {
-        var editwidth = $(icontarget).css("width");
-        var editheight = $(icontarget).css("height");
+        var editwidth = $(target).css("width");
+        var editheight = $(target).css("height");
         
 //        alert("width = " + editwidth + " height= " + editheight + " autoH? " +
-//                $(icontarget).isAuto("height") + " autoW? " + $(icontarget).isAuto('width') );
+//                $(target).isAuto("height") + " autoW? " + $(target).isAuto('width') );
         
-        if ( $(icontarget).isAuto("height") ) {
+        if ( $(target).isAuto("height") ) {
             $("#autoHeight").prop("checked", true);
             $("#editHeight").prop("disabled", true);
             $("#editHeight").css("background-color","gray");
@@ -1318,7 +1354,7 @@ function initColor(str_type, subid, thingindex) {
             $("#editHeight").val(editheight);
         }
         
-        if ( $(icontarget).isAuto("width") ) {
+        if ( $(target).isAuto("width") ) {
             $("#autoWidth").prop("checked", true);
             $("#editWidth").prop("disabled", true);
             $("#editWidth").css("background-color","gray");
@@ -1356,7 +1392,8 @@ function initColor(str_type, subid, thingindex) {
     // dh += "<button id='editReset' type='button'>Reset</button>";
     dh += "<div class='colorgroup'><label>Feature Selected:</label>";
     dh += "<div id='subidTarget' class='dlgtext'>" + subid + "</div>";
-    dh += "<div id='onoffTarget' class='dlgtext'>" + newonoff + "</div>";
+    var subonoff = $('#onoffTarget').html();
+    dh += "<div id='onoffTarget' class='dlgtext'>" + subonoff + "</div>";
     dh += "</div>";
     
     // $("#editReset").off('change');
@@ -1369,18 +1406,18 @@ function initColor(str_type, subid, thingindex) {
         event.stopPropagation;
     });
 
-    onstart = $(icontarget).css("background-color");
+    onstart = $(target).css("background-color");
     if ( !onstart || onstart==="rgba(0, 0, 0, 0)" ) {
         onstart = $(generic).css("background-color");
         if ( !onstart || onstart==="rgba(0, 0, 0, 0)" ) { onstart = $("div.thing").css("background-color"); }
         if ( !onstart || onstart==="rgba(0, 0, 0, 0)" ) { onstart = "rgba(0, 0, 0, 1)"; }
     }
     
-    // alert("icontarget= " + icontarget+" generic= "+generic+" onstart= "+onstart);
-    console.log("target= "+ icontarget+ " initial background-color= "+onstart);
+    // alert("target= " + target+" generic= "+generic+" onstart= "+onstart);
+    // console.log("target= "+ target+ " initial background-color= "+onstart);
     var iconback = '<div class="colorgroup"> \
                   <label for="iconColor">Background Color</label> \
-                  <input type="text" id="iconColor" caller="background" target="' + icontarget + '" \
+                  <input type="text" id="iconColor" caller="background" target="' + target + '" \
                   class="colorset" value="' + onstart + '"> \
                   </div>';
     
@@ -1390,7 +1427,7 @@ function initColor(str_type, subid, thingindex) {
     } else {
 
         // background effect
-        var oneffect = $(icontarget).css("background-image");
+        var oneffect = $(target).css("background-image");
         var dirright = false;
         var isdark = false;
         var iseffect = -1;
@@ -1431,19 +1468,19 @@ function initColor(str_type, subid, thingindex) {
         ceffect += "</select>";
         ceffect += "</div>";
 
-        var sliderbox = icontarget;
+        var sliderbox = target;
         if ( subid==="level" ) {
             sliderbox+= " .ui-slider";
             generic+= " .ui-slider";
         }
         
-        var onstart = $(sliderbox).css("color");
+        onstart = $(sliderbox).css("color");
         if ( !onstart || onstart==="rgba(0, 0, 0, 0)" ) {
             onstart = $(generic).css("color");
             if ( !onstart || onstart==="rgba(0, 0, 0, 0)" ) { onstart = $("div.thing").css("color"); }
             if ( !onstart || onstart==="rgba(0, 0, 0, 0)" ) { onstart = "rgba(255, 255, 255, 1)"; }
         }
-        console.log("target= "+ icontarget+ ", initial color= "+onstart);
+        // console.log("target= "+ target+ ", initial color= "+onstart);
         var iconfore = '<div class="colorgroup"> \
                       <label for="iconFore">Text Font Color</label> \
                       <input type="text" id="iconFore" \
@@ -1474,7 +1511,7 @@ function initColor(str_type, subid, thingindex) {
         if ( fstyle!=="normal") {
             fontdef+= "i";
         }
-        console.log("strtype= " + str_type + " ffamily= " + ffamily + " fweight= " + fweight + " fstyle= " + fstyle + " fontdef = "+ fontdef);
+        // console.log("strtype= " + str_type + " ffamily= " + ffamily + " fweight= " + fweight + " fstyle= " + fstyle + " fontdef = "+ fontdef);
 
         var fe = "";
         fe += "<div class='colorgroup font'><label>Font Type:</label>";
@@ -1495,7 +1532,7 @@ function initColor(str_type, subid, thingindex) {
         fe += "</select>";
         fe += "</div>";
 
-        var f = $(icontarget).css("font-size");
+        var f = $(target).css("font-size");
         f = parseInt(f);
 
         fe += "<div class='colorgroup font'><label>Font Size (px):</label>";
@@ -1523,6 +1560,7 @@ function initColor(str_type, subid, thingindex) {
         ishidden += "<label class=\"iconChecks\" for=\"isHidden\">Hide Element?</label></div><br />";
 
         var inverted = "<div class='editSection_input autochk'><input type='checkbox' id='invertIcon'><label class=\"iconChecks\" for=\"invertIcon\">Invert Element?</label></div>";
+        // inverted += "<div class='editSection_input'><input type='checkbox' id='fastPoll'><label class=\"iconChecks\" for=\"fastPoll\">Fast Poll?</label></div>";
 
         var border = "<div class='editSection_input'><label>Border Type:</label>";
         border += "<select name=\"borderType\" id=\"borderType\" class=\"ddlDialog\">";
@@ -1597,6 +1635,12 @@ function initColor(str_type, subid, thingindex) {
             addCSSRule(cssRuleTarget, strInvert, false);	
         }
     });
+    
+    // if user changes polling, force page reload
+//    $("#fastPoll").off('change');
+//    $("#fastPoll").on("change",function() {
+//        cm_Globals.reload = true;
+//    });
 
     $("#editEffect").off('change');
     $("#editEffect").on('change', function (event) {
@@ -1715,15 +1759,33 @@ function initColor(str_type, subid, thingindex) {
         var str_type = $("#tileDialog").attr("str_type");
         var thingindex = $("#tileDialog").attr("thingindex");
         var subid = $("#subidTarget").html();
+        var onoff = getOnOff(str_type, subid);
         var strCaller = $($(event.target)).attr("target");
         var ischecked = $(event.target).prop("checked");
         if ( ischecked  ){
             addCSSRule("div.overlay."+subid+".v_"+thingindex, "display: none;", true);
+            // addCSSRule(strCaller, "display: none;", false);
+            if ( onoff[0]!=="" && strCaller.endsWith("."+onoff[0]) ) {
+                strCaller = strCaller.slice(0,strCaller.length - onoff[0].length - 1);
+            } else if ( onoff[1]!=="" && strCaller.endsWith("."+onoff[1]) ) {
+                strCaller = strCaller.slice(0,strCaller.length - onoff[1].length - 1);
+            }
             addCSSRule(strCaller, "display: none;", false);
+            addCSSRule(strCaller + "." + onoff[0], "display: none;", false);
+            addCSSRule(strCaller + "." + onoff[1], "display: none;", false);
         } else {
             addCSSRule("div.overlay."+subid+".v_"+thingindex, "display: " + defaultOverlay + ";", true);
+            // addCSSRule(strCaller, "display: " + defaultShow + ";", false);
+            if ( onoff[0]!=="" && strCaller.endsWith("."+onoff[0]) ) {
+                strCaller = strCaller.slice(0,strCaller.length - onoff[0].length - 1);
+            } else if ( onoff[1]!=="" && strCaller.endsWith("."+onoff[1]) ) {
+                strCaller = strCaller.slice(0,strCaller.length - onoff[1].length - 1);
+            }
             addCSSRule(strCaller, "display: " + defaultShow + ";", false);
+            addCSSRule(strCaller + "." + onoff[0], "display: " + defaultShow + ";", false);
+            addCSSRule(strCaller + "." + onoff[1], "display: " + defaultShow + ";", false);
         }
+        // console.log("hidden debug: ",strCaller);
         event.stopPropagation;
     });	
     
@@ -1741,21 +1803,35 @@ function initColor(str_type, subid, thingindex) {
     $("#editReset").on('click', function (event) {
         var str_type = $("#tileDialog").attr("str_type");
         var thingindex = $("#tileDialog").attr("thingindex");
-        alert("Reset type= "+str_type+" thingindex= "+thingindex);
+        // alert("Reset type= "+str_type+" thingindex= "+thingindex);
         var subid = $("#subidTarget").html();
         resetCSSRules(str_type, subid, thingindex);
         event.stopPropagation;
     });
 
     // set the initial invert check box
-    if ( $(icontarget).css("filter") && $(icontarget).css("filter").includes("invert(1)") ) {
+    if ( $(target).css("filter") && $(target).css("filter").includes("invert(1)") ) {
         $("#invertIcon").prop("checked",true);
     } else {
         $("#invertIcon").prop("checked",false);
     }
     
+    // set initial fast poll check box
+    // disable fast polling for pages, controller, and frames (they are slow polled)
+//    if ( str_type==="blank" || str_type==="image" || str_type==="custom" || 
+//         str_type==="video" || str_type==="clock" ) {
+//        $("#fastPoll").prop("checked",true);
+//        $("#fastPoll").prop("disabled",false);
+//    } else if ( str_type==="page" || str_type==="control" || str_type==="frame" ) {
+//        $("#fastPoll").prop("checked",false);
+//        $("#fastPoll").prop("disabled",true);
+//    } else {
+//        $("#fastPoll").prop("checked",false);
+//        $("#fastPoll").prop("disabled",false);
+//    }
+    
     // set the initial icon none check box
-    var isicon = $(icontarget).css("background-image");
+    var isicon = $(target).css("background-image");
     if ( isicon === "none") {
         $("#noIcon").prop("checked", true);
     } else {
@@ -1763,7 +1839,7 @@ function initColor(str_type, subid, thingindex) {
     }
     
     // set the initial alignment
-    var initalign = $(icontarget).css("text-align");
+    var initalign = $(target).css("text-align");
     if ( initalign === "left") {
         $("#alignleft").prop("checked", true);
     } else if (initalign === "right") {
@@ -1773,7 +1849,7 @@ function initColor(str_type, subid, thingindex) {
     }
     
     // set the initial alignment
-    initalign = $(icontarget).css("background-position-x");
+    initalign = $(target).css("background-position-x");
     if ( initalign === "left") {
         $("#iconleft").prop("checked", true);
     } else if (initalign === "right") {
@@ -1784,9 +1860,10 @@ function initColor(str_type, subid, thingindex) {
     
     // set initial hidden status
     if ( subid!=="wholetile" ) {
-        var ish1= $(icontarget).css("display");
-        var ish2= $("div.overlay."+str_type+".v_"+thingindex).css("display");
-        if ( ish1 === "none" || ish2 === "none") {
+        var ish1= $(target).css("display");
+        var ish2= $("div.overlay."+subid+".v_"+thingindex).css("display");
+        var ish3 = $("div.overlay." + subid).css("display");
+        if ( ish1 === "none" || ish2 === "none" || ish3 ==="none") {
             $("#isHidden").prop("checked", true);
             defaultShow = "inline-block";
             defaultOverlay = "block";
@@ -1810,7 +1887,8 @@ function updateColor(strCaller, cssRuleTarget, str_type, subid, thingindex, strC
         } else {
             var sliderbox= sliderline + " .ui-slider";
             addCSSRule(sliderbox, "background-color: " + strColor + ";");		
-            addCSSRule(sliderbox, "color: " + strColor + ";");		
+            addCSSRule(sliderbox, "color: " + strColor + ";");
+            addCSSRule(sliderbox, "width: 100%;");
             var sliderbox2= sliderbox + " span.ui-slider-handle";
             addCSSRule(sliderbox2, "background-color: " + strColor + ";");		
             addCSSRule(sliderbox2, "color: " + strColor + ";");		
@@ -1942,8 +2020,8 @@ function iconSelected(category, cssRuleTarget, imagePath, str_type, subid, thing
     addCSSRule(cssRuleTarget, imgurl + strEffect + ";");
 
     // set new icons to default size
-    $("#autoBgSize").prop("checked", false);
-    updateSize(str_type, subid, thingindex);
+    // $("#autoBgSize").prop("checked", false);
+    // updateSize(str_type, subid, thingindex);
 }
 
 function updateSize(str_type, subid, thingindex) {
@@ -1984,6 +2062,7 @@ function updateSize(str_type, subid, thingindex) {
 function addCSSRule(selector, rules, resetFlag){
     //Searching of the selector matching cssRules
     // alert("Adding rules: " + rules);
+    cm_Globals.reload = true;
     
     var sheet = document.getElementById('customtiles').sheet; // returns an Array-like StyleSheetList
     var index = -1;
@@ -2016,6 +2095,7 @@ function addCSSRule(selector, rules, resetFlag){
 
 function resetCSSRules(str_type, subid, thingindex){
 
+        cm_Globals.reload = true;
         var ruletypes = ['wholetile','head'];
         ruletypes.forEach( function(rule, idx, arr) {
             var subtarget = getCssRuleTarget(str_type, rule, thingindex);
@@ -2028,7 +2108,7 @@ function resetCSSRules(str_type, subid, thingindex){
             onoff.forEach( function(rule, idx, arr) {
                 var subtarget = getCssRuleTarget(str_type, rule, thingindex);
                 removeCSSRule(subtarget, thingindex, null, 0);
-            })
+            });
         }
 }
 

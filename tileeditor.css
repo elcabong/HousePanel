@@ -42,9 +42,25 @@ div.greetingopts div {
     margin-bottom: 10px;
 }
 div.greetingopts div.hubopt {
-    margin-top: 20px; margin-bottom: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
     width: 1020px;
-    border-bottom: 2px solid black;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border: 2px solid black;
+    border-bottom: none;
+    background-color: #ccffff;
+}
+#newthingcount {
+    width: 1020px; height: 30px;
+    border: 2px solid black;
+    border-bottom: none;
+    background-color: #eeeeee;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 0px;
 }
 
 #showdocs {
@@ -78,7 +94,8 @@ label.highlight {
     color: #ffffee;
 }
 
-div.authhub {
+div.greetingopts div.authhub {
+    margin-top: 0px;
     border: 2px solid black;
     background-color: rgba(240, 240, 220, 1);
     width: 1020px;
@@ -245,7 +262,7 @@ form.houseauth {
 table.showid {
     background-color: white;
     color: #000000;
-    width: 90%;
+    width: 98%;
     text-align: left;
     
 }
@@ -298,38 +315,33 @@ table.roomoptions, table.headoptions {
 table.headoptions {
     height: 40px;
 }
-table.headoptions th.roomname, table.headoptions th.thingname, table.headoptions th.customedit, table.headoptions th.customname {
-    border-bottom: 5px solid rgba(0, 0, 80, 1);    
+table.headoptions th.roomname, table.headoptions th.thingname, table.headoptions th.hubname {
+    border-bottom: 2px solid rgba(0, 0, 80, 1);    
     background-color: #3a5795;    
     color:#ffffff;
-    font-weight: bold;    padding: 2px;    width: 100px;
-    text-align: center;    line-height: 1.5;    height: 30px;
+    font-weight: bold;    
+    width: 100px;
+    text-align: center;    
+    line-height: 1.5;    
+    height: 35px;
 }
-table.headoptions th.roomname {
-    cursor: pointer;
-}
-table.headoptions td, table.roomoptions td {
+table.roomoptions td, table.headoptions th {
     width: 100px;
     color:#000000;
     text-align: center;
     border-right: 1px solid #999999;
     border-bottom: 1px solid #999999;
 }
-table.roomoptions td.customedit, table.headoptions th.customedit {
-    text-align: center; 
-    width: 5%;    
-}
-table.roomoptions td.customname, table.headoptions th.customname {
-    text-align: center; 
-    width: 10%;    
-}
-
 table.roomoptions td.thingname, table.headoptions th.thingname {
     text-align: left; 
     width: 20%;    
     border-left: 1px solid #999999;
-    font-weight: bold;
-    border-left: 1px solid #999999;    
+    border-right: 1px solid #999999;
+}
+table.roomoptions td.hubname, table.headoptions th.hubname {
+    text-align: center; 
+    width: 15%;    
+    border-left: 1px solid #999999;
     border-right: 1px solid #999999;
 }
 
@@ -344,7 +356,8 @@ table.roomoptions tr.hiderow {
     display: none;
 }
 
-table.showid .thingname, table.showid .thingarr, table.showid .infotype, table.showid .infoid, table.showid .infonum {
+table.showid .thingname, table.showid .thingarr, table.showid .infotype, 
+table.showid .infoid, table.showid .hubid, table.showid .infonum {
     padding-left: 5px;
     text-align: center; 
     width: 10%;  
@@ -359,7 +372,9 @@ table.showid td.thingname {
 }
 table.showid td.thingarr {
     text-align: left; 
-    width: 30%;  
+    width: 30%;
+    max-width: 250px;
+    overflow-x: auto;
 }
 table.showid td.infotype {
     text-align: center; 
@@ -367,12 +382,19 @@ table.showid td.infotype {
 }
 table.showid td.infoid {
     text-align: left; 
-    width: 30%;  
+    max-width: 150px;
+    width: 25%;  
+}
+table.showid td.hubid {
+    text-align: left; 
+    max-width: 100px;
+    width: 25%;  
 }
 table.showid td.infonum, table.showid th.infonum {
     border-right: 1px solid #999999;
 }
-table.showid th.thingname, table.showid th.thingarr, table.showid th.infotype, table.showid th.infoid, table.showid th.infonum {
+table.showid th.thingname, table.showid th.thingarr, table.showid th.infotype, 
+table.showid th.infoid, table.showid th.hubid, table.showid th.infonum {
     font-weight: bold;
     font-size: 14pt;
     border-top: 1px solid #999999;
@@ -408,9 +430,9 @@ div.returninfo a {
         padding-right: 12px;
     }
 }
-span.typeopt {
+span.typeopt, span.ital {
     font-weight: normal;    font-family: "Raleway", serif;    font-style: italic;
-    color: #666666;
+    color: #666666; margin-left: 5px;
 }
 div.processoptions {
     margin-left: 0px; margin-top: 0px;    
@@ -467,7 +489,7 @@ div.restoretabs.hidden, div.thing.hidden.catalog-thing {
 }
 div.filteroption div.smallbutton {
     padding: 4px;
-    height: 0.8em;
+    height: 1.8em;
     width: 60px;
     display: inline-block;
     font-size: 12pt;
@@ -499,13 +521,13 @@ div.modeoptions {
 }
 
 div.modalbox {
-    display: inline-block;
+    display: block;
     text-align: left;
     padding: 5px;
+    border-top: 2px solid rgba(0, 0, 0, 1);
     background-color: rgba(255, 255, 246, 1);
     color: rgba(0, 0, 0, 1);
     font-size: 12pt;
-    position: absolute; 
     z-index: 99999;
 }
 
@@ -520,15 +542,29 @@ div.modalbuttons {
     margin-top: 5px;
 }
 
-button.dialogbtn {
+button.dialogbtn, button.cm_button, button.disabled {
     background-color: #3a5795;
     display: inline;
     width: 100px; height: 36px; margin-left: 5px; margin-right: 5px;
-    cursor: pointer;    border: none;
-    color: #eeeeee;    text-align: center;    font-weight: normal;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.8); 
-    border-right: 2px solid rgba(0, 0, 0, 0.8); 
+    cursor: pointer;
+    color: #eeeeee;
+    text-align: center;
+    font-weight: normal;
+    border-left: 2px solid #cccccc; 
+    border-top: 2px solid #cccccc; 
+    border-bottom: 2px solid black; 
+    border-right: 2px solid black; 
     font-size: 12pt;
+}
+button.dialogbtn:hover, button.cm_button:hover {
+    filter: invert(1);
+}
+button.disabled {
+    background-color: #cccccc;
+    cursor: default;
+}
+button.disabled:hover {
+    filter: invert(0);
 }
 
 input.editinp {
@@ -591,7 +627,7 @@ div.formbutton a {
     overflow: hidden;
 }
 
-#editheader {
+div.editheader {
     border-bottom: 2px solid rgba(255, 255, 255, 1);
     background-color: #000066;
     color:#ffffff;
@@ -618,17 +654,19 @@ div.formbutton a {
 .modalshow {
     display: block;
 }
-
-#wysiwyg {
+#wysiwyg, #wysiwyg2 {
     display: inline-block;
     margin-left: 5px;
 }
-
-#wysiwyg > div.editlink, #wysiwyg > div.dellink {
+#wysiwyg div.editlink, #wysiwyg div.dellink, #wysiwyg div.cmzlink {
+    display: none;
+}
+#wysiwyg2 div.editlink, #wysiwyg2 div.dellink, #wysiwyg2 div.cmzlink {
     display: none;
 }
 
-div.editlink, div.dellink, div.editpage, div.delpage, div.addpage {
+div.editlink, div.cmzlink, div.dellink, div.sortnum,
+div.editpage, div.delpage, div.addpage {
     border: 2px solid white; 
     color: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
@@ -639,16 +677,23 @@ div.editlink, div.dellink, div.editpage, div.delpage, div.addpage {
     cursor: pointer;
 }
 div.editpage, div.editlink {
-    background-color: rgba(0, 102, 102, 0.5);
+    background-color: rgba(0, 102, 102, 0.6);
     left: 0px;
 }
 div.delpage, div.dellink {
-    background-color: rgba(255, 0, 0, 0.5);
+    background-color: rgba(255, 0, 0, 0.6);
     right: 0px;
 }
-div.editlink, div.dellink {
+div.cmzlink {
+    background-color: rgba(0, 0, 102, 0.6);
+    right: 0px;
+}
+div.editlink, div.dellink, div.cmzlink {
     top: 12px;
-    width: 32px; height: 32px;
+    width: 28px; height: 28px;
+}
+div.cmzlink {
+    left: 36px;
 }
 div.addpage {
     font-size: 14px;
@@ -657,6 +702,17 @@ div.addpage {
     width: 40px; height: 24px;
     background-color: rgba(0, 102, 102, 1);
     right: 2px;
+}
+div.sortnum {
+    top: 12px;
+    width: 28px;
+    height: 23px;
+    padding-top: 5px;
+    background-color: rgba(230, 240, 240, 1);
+    border: 2px solid black; 
+    color: black;
+    font-weight: bold;
+    left: 0px;
 }
 
 div.wholetile {
@@ -675,8 +731,6 @@ input[type="button"]#wholetile {
     display: inline-block;
     width: auto;  
     height: auto;
-    margin-left: 2px;
-    margin-right: 7px;
 }
 
 #tileEdit, #pickerWrapper {
@@ -694,12 +748,21 @@ input[type="button"]#wholetile {
     height: 18px;
 }
 
+#tileDisplay {
+    display: inline-block;
+    width: auto;  
+    height: auto;
+    margin-left: 2px;
+    margin-right: 2px;
+    float: left;
+}
+
 #editicon {
     display: inline;
-    margin: 0px 0px 5px 7px;
+    margin: 0px 5px 5px 5px;  /* top, right, bottom, left */
     float: left;
     width: 245px;
-    max-height: 450px;
+    max-height: 470px;
     overflow-x: hidden;
     background-color: rgba(170, 170, 170, 1);
 }
@@ -952,6 +1015,24 @@ div#opmode {
 }
 
 /* mini colors */
+div.thing div.overlay.color {
+    position: absolute;
+    right: -2px;
+    top: 25px;
+    z-index: 999;
+}
+
+/* this makes cirles for color selections */
+div.overlay.color div.color {
+    position: absolute;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    display: none;
+    cursor: pointer;
+    z-index: 9999;
+}
+
 div.overlay.color .minicolors-theme-default.minicolors {
     z-index: 999;
 }
@@ -1135,6 +1216,14 @@ div.clock.tzone{
     display:none;
 }
 
+/* disable non time elements for analog clocks */
+div.clock-thing.analog div.clock.weekday,
+div.clock-thing.analog div.clock.date,
+div.clock-thing.analog div.clock.time,
+div.clock-thing.analog div.clock.tzone {
+    display: none;
+}
+
 /* do not display these items */
 div.checkInterval, div.switchlevel.checkInterval, div.switchlevel.indicatorStatus, 
 div.switch.checkInterval, div.motion.checkInterval, div.switch.indicatorStatus, 
@@ -1143,10 +1232,12 @@ div.switch.colorTemperature, div.lock.checkInterval,
 div.lock.codeChanged, div.lock.lockCodes, div.lock.scanCodes,
 div.lock.codeReport, div.lock.maxCodes, div.lock.maxCodeLength,
 div.lock.minCodeLength, div.lock.codeLength,
-div.thingname.blank, div.thingname.clock,
+div.thingname.blank, div.thingname.clock, div.thingname.video,
 div.thingname.image, div.thingname.routine, div.overlay.healthStatus,
+div.thing.frame-thing div.overlay.status,
 div.valve.switch, div.valve.contact, div.valve.stopWatering, div.valve.log,
-div.clock.tzone, div.thingname.mode
+div.clock.tzone, div.thingname.mode, div.bulb.colorMode, div.light.colorMode,
+div.illuminance-thing .overlay.temperature 
 {
     display:none;
 }
@@ -1177,6 +1268,9 @@ div.clock-thing.analog div.overlay.skin {
     left: -4px;
     border: none;
 }
+div.clock-thing div.overlay.fmt_date, div.clock-thing div.overlay.fmt_time {
+    display: none;
+}
 
 /* hide hue & sat & level for bulbs because we now have color pickers */
 div.overlay.hue, div.overlay.saturation, 
@@ -1199,14 +1293,25 @@ div.overlay.name {
     color: rgba(255, 255, 255, 0.01);
     width: auto;
 }
+div.config-thing div.overlay.name {
+    position: relative;
+    display: none;
+    color: rgba(255, 255, 255, 1);
+}
 
 /* sliders */
 .ui-slider-horizontal {
     height: 0.3em; 
 }
-
+div.thing div.overlay.level .ui-slider.slider-horizontal {
+    width: 100%;
+}
 
 /* battery display */
+div.overlay.battery {
+    position: absolute;
+}
+
 div.overlay.battery div.battery {
     background: none;
     display: block;
@@ -1288,6 +1393,213 @@ div.custom-thing {
 div.custom-thing div.post, div.custom-thing div.text {
     overflow-wrap: break-word;
 }
-div.video-thing div.thingname.video {
+div.video-thing div.thingname.video, 
+div.video.width, div.video.height,
+div.frame.width, div.frame.height {
     display: none;
+}
+iframe body {
+    margin: 0px;
+}
+
+div.weather-thing div.overlay {
+    display: inline;
+}
+div.overlay.weatherIcon div.weather, div.overlay.forecastIcon div.weather {
+    background-position-y: 8px;
+    width: 80px;
+    height: 74px;
+    padding-top: 6px;
+    margin-left: 8px; margin-right: 8px;
+    color: rgba(0, 0, 0, 1);
+    background-size: 80px;
+    
+    /* hide the icons for now until we figure out new format */
+    /*display: none;*/
+}
+
+div.weather.forecastToday, div.weather.forecastTonight, div.weather.forecastTomorrow {
+    display: none;
+}
+
+/* default weather name and city to not show */
+div.weather-thing div.overlay.name, div.weather-thing div.overlay.city {
+    display: none;
+    position: relative;
+}
+/* weather styling */
+div.thing.weather-thing {
+    background-color: rgba(0,0,0,0.01);
+    width: 240px;
+    text-align: center;
+    height: auto;
+}
+div.thing div.thingname.weather {
+    width: 92%;
+    padding-left: 4%; 
+    padding-right: 4%;
+}
+div.overlay.temperature div.weather.temperature, div.overlay.feelsLike div.weather.feelsLike {
+    display: inline-block;
+    width: 118px;
+    background-color: #006666;
+    color: #ffffee;
+    border: 2px solid white;
+    cursor: default;
+    text-align: center;
+    height: 70px;
+    width: 70px;
+    padding: 4px 3px 0 3px;
+    margin: 10px;
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 55px;
+}
+div.weather.feelsLike::before {
+    content: "Like: ";
+    font-size: 8pt;
+}
+div.weather.wind::before {
+    content: "Wind: ";
+}
+div.weather.wind::after {
+    content: " mph";
+}
+div.weather.windVector::before {
+    content: "Wind: ";
+}
+div.weather.humidity::before {
+    content: "Humidity: ";
+}
+div.weather.percentPrecip::before {
+    content: "Rain: ";
+}
+div.weather.humidity::after, div.weather.percentPrecip::after {
+    content: "%";
+}
+div.weather.illuminance::before {
+    content: "Lux: ";
+}
+div.weather.localSunrise::before {
+    content: "Sunrise: ";
+}
+div.weather.localSunset::before {
+    content: "Sunset: ";
+}
+div.weather.sunriseset {
+    margin-top: 10px;
+}
+div.weather.timeZoneOffset, div.weather.alertKeys,
+div.weather.sunriseset, div.weather.wind,
+div.weather.ultravioletIndex, div.weather.lastUpdate {
+    display: none;
+}
+div.weather_icons {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+div.weather.weatherIcon, div.weather.forecastIcon {
+    display: inline-block;
+}
+div.thing.control-thing {
+    background-color: rgba(0, 102, 102, 1);
+    color: rgba(204, 204, 204, 1);
+    width: 150px;
+    height: auto;
+}
+
+/* make all control items look right */
+div.thing.control-thing div.overlay {
+    cursor: pointer;
+}
+div.thing.control-thing div.thingname {
+    background-color: rgba(50, 50, 100, 1);
+}
+
+div.control.name {
+    display: none;
+}
+div.thing.control-thing div.overlay:hover {
+    background-color: rgba(204, 204, 204, 1);
+    color: rgba(0, 102, 102, 1);
+}
+
+div.thing.frame-thing div.frame.width, 
+div.thing.frame-thing div.frame.height {
+    display: none;
+}
+div.thing div.user_hidden {
+    display: none;
+}
+
+div.cm_group {
+    display: block;
+    margin-top: 10px;
+    margin-left: 5px;
+}
+#cm_linkfields {
+    width: 400px;
+}
+
+div.cm_preview {
+    width: auto;
+    height: auto;
+    background-color: black;
+    border-top: 3px solid #cccccc;
+    border-left: 3px solid #cccccc;
+    border-right: 3px solid #333333;
+    border-bottom: 3px solid #333333;
+}
+
+#cm_text {
+    width: 400px;
+}
+
+.readonly {
+    background-color: #cccccc;
+}
+
+#cm_dynoInfo {
+    width: 725px;
+    background-color: white;
+    border-top: 3px solid #cccccc;
+    border-left: 3px solid #cccccc;
+    border-right: 3px solid black;
+    border-bottom: 3px solid black;
+}
+
+div.cm_group label {
+    margin-right: 4px;
+}
+#cm_linkbid {
+    margin-bottom: 10px;
+    border: 1px solid black;
+    background-color: #cccccc;
+    padding: 4px;
+    width: 400px; height: 15px;
+}
+
+#cm_builtinfields option, #cm_userfield {
+    width: 300px;
+}
+
+table.cm_table {
+    border: none;
+    background-color: #b0b099;
+}
+
+table.cm_table td {
+    vertical-align: top;
+}
+
+#cm_subheader {
+    font-size: 20pt; color: #000000;
+}
+
+/* hide user selected refresh rates */
+div.overlay.refresh {
+    display: none;
+}
+div.control-thing div.overlay.refresh {
+    display: block;
 }

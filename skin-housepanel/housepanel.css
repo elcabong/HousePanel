@@ -33,9 +33,6 @@ div.panel-Music, div.panel-music, div.panel-Theater, div.panel-theater,
 div.panel-Entertainment, div.panel-entertainment {
     background-image: url('media/music.jpg');
 }
-div.panel-Thermostats, div.panel-thermostats {
-    background-image: url('media/thermostat.jpg');
-}
 
 /* all things look like this */  
 /* the heights are set to auto for larger items like weather and thermostats */
@@ -131,11 +128,14 @@ div.on, div.off, div.present, div.absent, div.firing, div.piston.pistonName {
 }
 
 /* alter the thermostat on and off to show since we don't use an icon here */
+div.thermostat.thermostatMode, div.thermostat.thermostatFanMode, 
+div.thermostat.thermostatOperatingState, div.thermostat.humidity,
 div.thermomode.auto, div.thermomode.off,
 div.thermomode.heat, div.thermomode.cool,
 div.thermofan.off, div.thermofan.on, div.thermofan.circulate {
     font-size: 11pt;
     background-image: none;
+    background-color: #333333;
     background-position: center center;
     color: rgba(255, 255, 255, 1);
 }
@@ -173,7 +173,7 @@ div.door.closed, div.contact.door.closed {
     background-size: 40px;
 }
 /* hide the contact part of garage doors that include an embedded contact sensor */
-div.door-thing.garage div.contact {
+div.door-thing.garage div.overlay.contact {
     display: none;
 }
 div.contact.window.open, div.custom.window.open {
@@ -283,35 +283,21 @@ div.switch.level {
     display: none;
 }
 
-/* new style uses overlay to put in bottom right corner */
-div.overlay.power, div.overlay.energy {
-	position: absolute; top: 32px; left: 0px;
-	z-index: 100;
-        border: none;
-        background: none;
-	height: auto;
-}
-div.overlay.power div.switch.power {
-    z-index: 101;
-    display: block;
-    float: left;
-    height: 12px;
+/* change power and energy default style */
+div.overlay.power div.power,
+div.overlay.energy div.energy {
     text-align: left;
-    color: rgba(10,96,10,1);
+    background-color: rgba(204, 0, 51, 1);
+    color: rgba(255, 255, 255, 1);
     font-weight: bold;
-    font-size: 10pt;
-    margin-left: 5px;
 }
-div.overlay.energy div.switch.energy {
-    z-index: 101;
-    display: block;
-    float: right;
-    height: 12px;
-    text-align: right;
-    color: rgba(10,96,10,1);
-    font-weight: bold;
-    font-size: 10pt;
+div.overlay.energy div.energy::after, div.overlay.switch div.energy::after {
+    content: " (kWh)";
 }
+div.overlay.power div.power::after, div.overlay.switch div.power::after {
+    content: " (Watts)";
+}
+
 
 /* switchlevel / dimmer styling - make room for the dimmer controls */
 /* if you have a dimmer with power and energy controls - see custom below */
@@ -352,33 +338,32 @@ div.heat-dn, div.cool-dn, div.level-dn, div.switchlevel-dn,
 div.heat-up, div.cool-up, div.level-up, div.switchlevel-up,
 div.colorTemperature-up, div.colorTemperature-dn,
 div.hue-up, div.hue-dn,
-div.saturation-up, div.saturation-dn
-{
+div.saturation-up, div.saturation-dn,
+div.heatingSetpoint-dn, div.coolingSetpoint-dn,
+div.heatingSetpoint-up, div.coolingSetpoint-up {
     display: inline-block;
     width: 32px; height: 32px;
     border: 0px; padding: 0px;
     cursor: pointer;
 }
 div.heat-dn, div.cool-dn, div.level-dn, div.switchlevel-dn,
-div.colorTemperature-dn, div.hue-dn, div.saturation-dn {
+div.colorTemperature-dn, div.hue-dn, div.saturation-dn,
+div.heatingSetpoint-dn, div.coolingSetpoint-dn {
     background-image: url("media/sprites.gif");
     color: rgba(255, 255, 255, 0.01);
     background-position: -32px 0px;
 	background-size: auto;
     box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
 }
 
 div.heat-up, div.cool-up, div.level-up, div.switchlevel-up,
-div.colorTemperature-up, div.hue-up, div.saturation-up {
+div.colorTemperature-up, div.hue-up, div.saturation-up,
+div.heatingSetpoint-up, div.coolingSetpoint-up {
     background-image: url("media/sprites.gif");
     color: rgba(255, 255, 255, 0.01);
     background-position: -272px -2px;
 	background-size: auto;
     box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
-    -moz-box-shadow: 0px 1px 2px rgba(0,0,0,0.8);
 }
 
 /* music styling */
@@ -438,7 +423,7 @@ div.weather.temperature, div.weather.feelsLike {
     -moz-border-radius: 50%;
 }
 
-div.thermofan.off, div.thermofan.on,
+/*div.thermofan.off, div.thermofan.on,
 div.thermomode.auto,div.thermomode.heat, div.thermomode.cool, div.thermomode.off,
 div.thermostate, div.thermostat.humidity  {
 	background-color: #333333;
@@ -446,31 +431,37 @@ div.thermostate, div.thermostat.humidity  {
 	height: auto;
         margin: 0; padding: 0;
         color: #ffffff;
-}
-div.thermomode.on, div.thermofan.on {
+}*/
+
+div.thermomode.on, div.thermostatMode.on, 
+div.thermofan.on, div.thermostatFanMode.on {
     background-color: #3333ff;
 }
-div.thermomode.heat {
+div.thermomode.heat, div.thermostatMode.heat {
     background-color: #ff3300;
 }
-div.thermomode.cool {
+div.thermomode.cool, div.thermostatMode.cool {
     background-color: #3333ff;
 }
-div.thermomode.auto, div.thermofan.auto {
+div.thermomode.auto, div.thermofan.auto, 
+div.thermostatMode.auto, div.thermostatFanMode.auto {
     background-color: #009999;
 }
-div.thermostat.humidity {
-    background-color: #666666;
-}
 div.thermostat.thermofan::before,
+div.thermostat.thermostatFanMode::before,
+div.custom.thermostatFanMode::before,
 div.custom.thermofan::before {
     content: "Fan: ";
 }
 div.thermostat.thermomode::before,
+div.thermostat.thermostatMode::before,
+div.custom.thermostatMode::before,
 div.custom.thermomode::before {
     content: "Mode: ";
 }
 div.thermostat.thermostate::before,
+div.thermostat.thermostatOperatingState::before,
+div.custom.thermostatOperatingState::before,
 div.custom.thermostate::before {
     content: "State: ";
 }
@@ -487,7 +478,10 @@ div.custom.humidity::after {
 /* include legacy and updated corrected names */
 div.heat-val, div.cool-val, div.level-val, div.switchlevel-val,
 div.colorTemperature-val, div.hue-val, div.saturation-val,
-div.heat, div.cool, div.hue, div.saturation  {
+div.heatingSetpoint-val, div.coolingSetpoint-val,
+div.hue, div.saturation,
+div.overlay.heat div.thermostat.heat, div.overlay.cool div.thermostat.cool,
+div.thermostat.heatingSetpoint, div.thermostat.coolingSetpoint {
     display: inline-block;
     position: relative;
     left: 0px; top: 0px;
@@ -495,14 +489,20 @@ div.heat, div.cool, div.hue, div.saturation  {
     vertical-align: top;
     font-size: 18px;
     width: 72px;
-    height: 26px;
+    height: 32px;
     color: rgba(255, 255, 255, 1);
     border: 0px;
 }
-div.heat-val, div.heat {
+div.thermostat.heatingSetpoint, div.thermostat.coolingSetpoint,
+div.overlay.heat div.thermostat.heat, div.overlay.heat div.thermostat.cool {
+    padding-top: 5px;
+    height: 27px;
+}
+
+div.heat, div.heatingSetpoint {
     background-color: #cc3300;
 }
-div.cool-val, div.cool {
+div.cool, div.coolingSetpoint {
     background-color: #0033cc;
 }
 div.colorTemperature-val, div.hue-val, div.saturation-val, div.hue, div.saturation {
@@ -510,6 +510,7 @@ div.colorTemperature-val, div.hue-val, div.saturation-val, div.hue, div.saturati
     color: #000000;
 }
 div.thermostat.thermomode, div.thermostat.thermofan, div.thermostat.thermofan.on,
+div.thermostat.thermostatMode, div.thermostat.thermostatFanMode,
 div.thermostat.thermostate, div.thermostat.humidity {
     width: 100%;
 }
@@ -518,6 +519,8 @@ div.thing.temperature-thing {
 }
 
 /* hover over the adjustment arrows */
+div.heatingSetpoint-up:hover, div.heatingSetpoint-dn:hover, 
+div.coolingSetpoint-up:hover, div.coolingSetpoint-dn:hover,
 div.heat-up:hover, div.heat-dn:hover, 
 div.cool-up:hover, div.cool-dn:hover,
 div.switchlevel-up:hover, div.switchlevel-dn:hover,
@@ -537,17 +540,18 @@ div.thing.music-thing {
     height: auto;
 }
 /* use italic serif font for music titles and a custom size */
-div.music.track, div.custom.track {
+div.music.track, div.custom.track, div.music.trackDescription {
     font-family: "Raleway",serif;
     font-size: 11pt;
     font-style: italic;
-    height: 48px;
+    height: 40px;
     width: 180px;
-    padding-top: 2px;
+    padding-top: 10px;
     border-bottom: none;
     background-color: rgba(80, 80, 80, 0.7);
 }
-div.music.musicstatus, div.music.musicmute, div.custom.musicstatus, div.custom.musicmute {
+div.music.musicstatus, div.music.musicmute, div.custom.musicstatus, div.custom.musicmute,
+div.music.status, div.music.mute {
     height: 24px;
     width: 100%;
     font-size: 11pt;
@@ -598,17 +602,6 @@ div.custom.feelsLike::before {
     content: "Like: ";
     font-size: 8pt;
 }
-div.weather img, div.custom img {
-    margin-left: 15px;
-    margin-right: 15px;
-}
-div.weather.wind::before,
-div.custom.wind::before {
-    content: "Wind: ";
-}
-div.weather.wind::after {
-    content: " mph";
-}
 div.weather.humidity::before {
     content: "Humidity: ";
 }
@@ -623,14 +616,12 @@ div.weather.illuminance::after,
 div.custom.illuminance::after {
     content: " Lux";
 }
-div.weather.sunrise {
-    margin-top: 10px;
-}
-div.weather.humidity, div.weather.sunrise, div.weather.sunset,
-div.weather.wind, div.weather.percentPrecip, div.weather.alert, div.weather.illuminance {
-    background-color: #333333;
+/*div.weather.humidity, div.weather.localSunrise, div.weather.localSunset,
+div.windVector, div.weather.percentPrecip, div.weather.alert, div.weather.illuminance {
+    background-color: rgba(100, 100, 100, 1);
     margin-bottom: 0px;
-}
+    display: block;
+}*/
 div.weather.sunriseset, div.weather.timeZoneOffset, div.weather.alertKeys,
 div.weather.sunriseDate, div.weather.sunsetDate,
 div.weather.ultravioletIndex, div.weather.lastUpdate {
@@ -639,71 +630,13 @@ div.weather.ultravioletIndex, div.weather.lastUpdate {
 div.weather.weatherIcon, div.weather.forecastIcon {
     display: inline-block;
 }
-div.weather-thing div.overlay {
-    display: inline;
-    padding-right: 0px;
-}
 div.weather-thing div.overlay.temperature, div.weather-thing div.overlay.feelsLike {
     display: inline;
     padding-right: 4px;
 }
-div.overlay.weatherIcon div.weather, div.overlay.forecastIcon div.weather {
-    background-position-y: 8px;
-    width: 80px;
-    height: 74px;
-    padding-top: 6px;
-    margin-left: 8px; margin-right: 8px;
-    color: rgba(0, 0, 0, 1);
-    background-size: 80px;
-}
-div.weather-thing div.overlay.name, div.weather-thing div.overlay.city {
+div.weather-thing div.overlay.name {
     display: none;
     position: relative;
-}
-div.overlay.weatherIcon div.clear, div.overlay.forecastIcon div.clear {
-    background-image: url("media/clear.png");
-}
-div.overlay.weatherIcon div.mostlysunny, div.overlay.forecastIcon div.mostlysunny {
-    background-image: url("media/mostlysunny.png");
-}
-div.overlay.weatherIcon div.partlysunny, div.overlay.forecastIcon div.partlysunny {
-    background-image: url("media/partlysunny.png");
-}
-div.overlay.weatherIcon div.rain, div.overlay.forecastIcon div.rain {
-    background-image: url("media/rain.png");
-}
-div.overlay.weatherIcon div.chancerain, div.overlay.forecastIcon div.chancerain {
-    background-image: url("media/rain.png");
-}
-div.overlay.weatherIcon div.snow, div.overlay.forecastIcon div.snow {
-    background-image: url("media/snow.png");
-}
-div.overlay.weatherIcon div.chancesnow, div.overlay.forecastIcon div.chancesnow {
-    background-image: url("media/snow.png");
-}
-div.overlay.weatherIcon div.tstorms, div.overlay.forecastIcon div.tstorms {
-    background-image: url("media/tstorms.png");
-}
-div.overlay.weatherIcon div.chancetstorms, div.overlay.forecastIcon div.chancetstorms {
-    background-image: url("media/tstorms.png");
-}
-div.overlay.weatherIcon div.cloudy, div.overlay.forecastIcon div.cloudy {
-    background-image: url("media/cloudy.png");
-}
-div.overlay.weatherIcon div.mostlycloudy, div.overlay.forecastIcon div.mostlycloudy {
-    background-image: url("media/mostlycloudy.png");
-}
-div.overlay.weatherIcon div.partlycloudy, div.overlay.forecastIcon div.partlycloudy {
-    background-image: url("media/partlycloudy.png");
-}
-div.overlay.weatherIcon div.windy, div.overlay.forecastIcon div.windy {
-    background-image: url("media/windy.png");
-}
-div.overlay.weatherIcon div.sleet, div.overlay.forecastIcon div.sleet {
-    background-image: url("media/rain.png");
-}
-div.overlay.weatherIcon div.fog, div.overlay.forecastIcon div.fog {
-    background-image: url("media/fog.png");
 }
 
 /* clock styling */
@@ -725,13 +658,6 @@ div.clock.time {
 div.clock.weekday, div.clock.date {
     font-size: 14pt;
     margin-top: 5px;
-}
-
-/* disable non time elements for analog clocks */
-div.clock-thing.analog div.clock.weekday,
-div.clock-thing.analog div.clock.date,
-div.clock-thing.analog div.clock.tzone {
-    display: none;
 }
 
 div.mode.themode {
@@ -806,40 +732,13 @@ div.presence.absent, div.custom.absent {
     color: rgba(255, 255, 255, 0.01);
 }
 
-div.bulb.color, div.light.color, div.custom.color {
-    position: absolute;
-    left: 8px;
-    top: 44px;
-    height: 32px;
-    width: 32px;
-    font-size: 12px;
-    display: none;
-    cursor: pointer;
-    z-index: 9999;
-}
 div.bulb.colorMode {
     display: none;
-}
-
-div.bulb-thing div.overlay.color {
-    position: absolute;
-    right: -2px;
 }
 
 div.custom-thing {
     height: 150px;
     width: 120px;
-}
-div.custom.post {
-    height: 80px;
-    color: rgba(255, 255, 255, 1);
-}
-div.custom.text {
-    height: 30px;
-    color: rgba(255, 255, 255, 1);
-}
-div.custom.name {
-    display: none;
 }
 
 /* for weather illuminance avoid showing T and fix humidity */
